@@ -263,9 +263,11 @@ namespace raduls
 			int64x2_t* src = (int64x2_t*) _src;
 
 			for (unsigned i = 0; i < SIZE; ++i)
+#if __has_builtin(__builtin_nontemporal_store)
 				__builtin_nontemporal_store(*src, dest);
 #else
 				vst1q_s64((int64_t*)(p+i), src[i]);
+#endif
 #endif
 		}
 	};
