@@ -62,6 +62,30 @@ namespace raduls
 		return (index < sizeof(wide_small_sort_thresholds) / sizeof(wide_small_sort_thresholds[0])) ? wide_small_sort_thresholds[index] : 32;
 	}
 
+	/* Compiler barrier */
+#if defined(_MSC_VER)
+#define SSE2NEON_BARRIER() _ReadWriteBarrier()
+#else
+#define SSE2NEON_BARRIER()                     \
+    do {                                       \
+        __asm__ __volatile__("" ::: "memory"); \
+        (void) 0;                              \
+    } while (0)
+#endif
+
+	FORCE_INLINE void _sse2neon_smp_mb(void)
+	{
+		SSE2NEON_BARRIER();
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && \
+    !defined(__STDC_NO_ATOMICS__)
+		atomic_thread_fence(memory_order_seq_cst);
+#elif defined(__GNUC__) || defined(__clang__)
+		__atomic_thread_fence(__ATOMIC_SEQ_CST);
+#else /* MSVC */
+//		__dmb(_ARM64_BARRIER_ISH);
+#endif
+	}
+
 #ifdef __GNUG__
 #if __GNUC__ < 6
 	static_assert(false, "gcc 6 or higher is required.");
