@@ -781,7 +781,11 @@ namespace raduls
 						}
 					}
 			}
+#if defined(ARCH_X64)
 			_mm_sfence();
+#elif defined(ARCH_ARM)
+			_sse2neon_smp_mb();
+#endif
 		}
 
 		void SmallRadixSort(RECORD_T* data, RECORD_T* tmp, uint64_t n_recs, uint32_t byte, uint32_t last_byte_pos)
@@ -825,7 +829,11 @@ namespace raduls
 				if (must_copy_tmp)
 					IntrCopy64fun(data, tmp, n_recs * sizeof(RECORD_T) / 8);
 			}
+#if defined(ARCH_X64)
 			_mm_sfence();
+#elif defined(ARCH_ARM)
+			_sse2neon_smp_mb();
+#endif
 		}
 	public:
 		CRadixSorterMSD(CRadixMSDTaskQueue<RECORD_T>& tasks_queue, uint64_t use_queue_min_recs, uint8_t* _buffer)
@@ -1255,7 +1263,11 @@ namespace raduls
 					CacheRecordToMainMemory<RECORD_T, BUFFER_WIDTH>(data, byte, key, first_store, histo, histo_begin, histo_end, read_pos, tail, cache_buff);
 			}
 
+#if defined(ARCH_X64)
 			_mm_sfence();
+#elif defined(ARCH_ARM)
+			_sse2neon_smp_mb();
+#endif
 
 			//store records that are still in cache buffer back to source digit (byte) range 
 			CleanCache<RECORD_T, BUFFER_WIDTH>(data, byte, first_store, histo, histo_begin, cache_buff);
@@ -1563,7 +1575,11 @@ namespace raduls
 					CacheRecordToMainMemory_single_thread<RECORD_T, BUFFER_WIDTH>(data, byte, key, first_store, histo, histo_begin, read_pos, cache_buff);				
 			}
 
+#if defined(ARCH_X64)
 			_mm_sfence();
+#elif defined(ARCH_ARM)
+			_sse2neon_smp_mb();
+#endif
 			//store records that are still in cache buffer back to source digit (byte) range 
 			CleanCache<RECORD_T, BUFFER_WIDTH>(data, byte, first_store, histo, histo_begin, cache_buff);
 		}		
