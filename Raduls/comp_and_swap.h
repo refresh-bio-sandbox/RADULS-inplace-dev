@@ -99,8 +99,8 @@ namespace raduls
 					_mm_storeu_si128((__m128i*)lhs.data, a);
 					_mm_storeu_si128((__m128i*)rhs.data, b);
 #elif defined(ARCH_ARM)
-					uint64x2_t a = vld1q_u64(Comp{}(lhs, rhs) ? (const uint64x2_t*)lhs.data : (const uint64x2_t*)rhs.data);
-					uint64x2_t b = vld1q_u64(!Comp{}(lhs, rhs) ? (const uint64x2_t*)lhs.data : (const uint64x2_t*)rhs.data);
+					uint64x2_t a = vld1q_u64(Comp{}(lhs, rhs) ? (const uint64_t*)lhs.data : (const uint64_t*)rhs.data);
+					uint64x2_t b = vld1q_u64(!Comp{}(lhs, rhs) ? (const uint64_t*)lhs.data : (const uint64_t*)rhs.data);
 					vst1q_u64((uint64_t*)lhs.data, a);
 					vst1q_u64((uint64_t*)rhs.data, b);
 #else
@@ -295,8 +295,8 @@ namespace raduls
 					_mm_storeu_si128((__m128i*)lhs.data, a);
 					_mm_storeu_si128((__m128i*)rhs.data, b);
 #elif defined(ARCH_ARM)
-					uint64x2_t a = vld1q_u64(Comp{}(lhs, rhs) ? (const uint64x2_t*)lhs.data : (const uint64x2_t*)rhs.data);
-					uint64x2_t b = vld1q_u64(!Comp{}(lhs, rhs) ? (const uint64x2_t*)lhs.data : (const uint64x2_t*)rhs.data);
+					uint64x2_t a = vld1q_u64(Comp{}(lhs, rhs) ? (const uint64_t*)lhs.data : (const uint64_t*)rhs.data);
+					uint64x2_t b = vld1q_u64(!Comp{}(lhs, rhs) ? (const uint64_t*)lhs.data : (const uint64_t*)rhs.data);
 					vst1q_u64((uint64_t*)lhs.data, a);
 					vst1q_u64((uint64_t*)rhs.data, b);
 #else
