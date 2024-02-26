@@ -78,7 +78,7 @@ excetions.o: exceptions.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
 
 sorting_network.o: sorting_network.cpp
-	$(CXX) -static -O1 -m64 -std=c++14 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -c $< -o $@
+	$(CXX) -static -O1 $(COMMON_FLAGS) $(COMMON_DEFS) -std=c++14 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -c $< -o $@
 
 raduls_impl.o: raduls_impl.cpp
 	$(CXX) $(CFLAGS) $(COMMON_DEFS) -c $< -o $@
