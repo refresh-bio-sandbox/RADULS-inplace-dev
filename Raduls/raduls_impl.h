@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <queue>
 #include <mutex>
+#include <future>
 #include <thread>
 #include <cstring>
 #include <condition_variable>
@@ -820,6 +821,20 @@ namespace raduls
 	{
 		uint32_t n_threads;
 
+		void join_threads(std::vector<std::thread>& threads)
+		{
+			for (auto& th : threads)
+				th.join();
+			threads.clear();
+		}
+
+		void join_futures(std::vector<std::future<void>>& futures)
+		{
+			for (auto& fut : futures)
+				fut.get();
+			futures.clear();
+		}
+
 	public:
 		CRaduls(uint32_t n_threads) :
 			n_threads(n_threads)
@@ -849,14 +864,15 @@ namespace raduls
 			std::vector<COUNTER_TYPE[256]> histos(n_parts);
 			alignas(ALIGNMENT)COUNTER_TYPE globalHisto[257] = {};
 
+			std::vector<std::future<void>> futures;
 
 			for (uint32_t th_id = 0; th_id < n_threads; ++th_id)
-				threads.emplace_back(FirstPassStage1<RECORD_T, COUNTER_TYPE>,
-					data, std::ref(histos), byte, std::ref(range_queue));
+//				threads.emplace_back(FirstPassStage1<RECORD_T, COUNTER_TYPE>,
+				futures.emplace_back(std::async(FirstPassStage1<RECORD_T, COUNTER_TYPE>,
+					data, std::ref(histos), byte, std::ref(range_queue)));
 
-			for (auto& th : threads)
-				th.join();
-			threads.clear();
+//			join_threads(threads);
+			join_futures(futures);
 
 			// ***** collecting counters
 			for (int i = 0; i < 256; ++i)
@@ -912,14 +928,14 @@ namespace raduls
 			auto fun = is_first_level ? FirstPassStage2<RECORD_T, COUNTER_TYPE> : BigBinsScatter<RECORD_T, COUNTER_TYPE>;
 
 			for (uint32_t th_id = 0; th_id < n_threads; ++th_id)
-				threads.emplace_back(fun,
+//				threads.emplace_back(fun,
+				futures.emplace_back(std::async(fun,
 					data, tmp, byte,
 					std::ref(histos), std::ref(buffers), std::ref(threads_histos),
-					std::ref(range_queue));
+					std::ref(range_queue)));
 
-			for (auto& th : threads)
-				th.join();
-			threads.clear();
+			//			join_threads(threads);
+			join_futures(futures);
 
 			//stage 3
 			range_queue.reset_indices();
@@ -986,7 +1002,8 @@ namespace raduls
 				{
 					sorters.emplace_back(std::make_unique<SORTER_T>(tasks_queue,
 						use_queue_min_recs, buffers[n_threads_for_small_bins_running]));
-					threads.emplace_back(std::ref(*sorters.back().get()));
+//					threads.emplace_back(std::ref(*sorters.back().get()));
+					futures.emplace_back(std::async(std::ref(*sorters.back().get())));
 				}
 
 				for (auto& big_bin : big_bins)
@@ -997,11 +1014,12 @@ namespace raduls
 				{
 					sorters.emplace_back(std::make_unique<SORTER_T>(tasks_queue,
 						use_queue_min_recs, buffers[n_threads_for_small_bins_running]));
-					threads.emplace_back(std::ref(*sorters.back().get()));
+//					threads.emplace_back(std::ref(*sorters.back().get()));
+					futures.emplace_back(std::async(std::ref(*sorters.back().get())));
 				}
 
-				for (auto& th : threads)
-					th.join();
+//				join_threads(threads);
+				join_futures(futures);
 			}
 		}
 	};
