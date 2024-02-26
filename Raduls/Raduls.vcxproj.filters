@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Library Files">
+      <UniqueIdentifier>{7284e842-78e4-4fc1-b43c-7c8ba6a2c82a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="comp_and_swap.h">
@@ -68,12 +71,11 @@
     <ClCompile Include="exceptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="override-new-delete.cpp">
+    <ClCompile Include="..\3rd_party\mimalloc\src\static.c">
+      <Filter>Library Files</Filter>
+    </ClCompile>
+    <ClCompile Include="raduls_NEON.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="mimalloc\mimalloc-static.lib" />
-    <Library Include="mimalloc\mimalloc-static-debug.lib" />
   </ItemGroup>
 </Project>

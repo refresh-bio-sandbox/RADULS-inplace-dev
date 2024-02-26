@@ -1161,7 +1161,7 @@ namespace raduls
 	}
 
 	template<typename RECORD_T, unsigned BUFFER_WIDTH>
-	void ParadisCacheScatter(RECORD_T* data, uint64_t* histo, uint64_t* histo_end, uint32_t rec_pos, RECORD_T* cache_buff)
+	void RSCacheScatter(RECORD_T* data, uint64_t* histo, uint64_t* histo_end, uint32_t rec_pos, RECORD_T* cache_buff)
 	{
 
 		//TODO: uwaga, na razie ten algorytm dziala tak:
@@ -1210,7 +1210,7 @@ namespace raduls
 	}
 
 	template<typename RECORD_T>
-	void PARADIS_permute_without_cache(RECORD_T* data, uint64_t* histo, uint64_t* histo_end, uint32_t rec_pos)
+	void RS_permute_without_cache(RECORD_T* data, uint64_t* histo, uint64_t* histo_end, uint32_t rec_pos)
 	{
 		for (uint32_t _byte = 0; _byte < 256; ++_byte)
 		{
@@ -1238,7 +1238,7 @@ namespace raduls
 	}
 
 	template<typename RECORD_T>
-	void ParadisPermuteThread_first_store(RECORD_T* data, std::vector<uint64_t[256]>& _histo_start, std::vector<uint64_t[256]>& _histo_end, uint32_t rec_pos, uint64_t tid, uint64_t n_recs_per_this_thread, RECORD_T* cache)
+	void RSPermuteThread_first_store(RECORD_T* data, std::vector<uint64_t[256]>& _histo_start, std::vector<uint64_t[256]>& _histo_end, uint32_t rec_pos, uint64_t tid, uint64_t n_recs_per_this_thread, RECORD_T* cache)
 	{
 		//TODO: to trzeba zrefaktoryzowac tak zeby nie bylo tu sztywnych sta³ych, wycniagnac to gdzies jakos ladnie
 		auto constexpr BUFFER_WIDTH = GetBufferWidth(sizeof(RECORD_T) / 8);
@@ -1248,32 +1248,32 @@ namespace raduls
 
 		if (n_recs_per_this_thread < 400000) //400k wyznaczone eksperymentalnie dla rekordu 8B
 		{
-			PARADIS_permute_without_cache(data, histo, histo_end, rec_pos);
+			RS_permute_without_cache(data, histo, histo_end, rec_pos);
 		}
 		else if (n_recs_per_this_thread < 3 * 1000 * 1000)//3M
 		{
-			ParadisCacheScatter<RECORD_T, 16>(data, histo, histo_end, rec_pos, cache);
-			PARADIS_permute_without_cache(data, histo, histo_end, rec_pos);
+			RSCacheScatter<RECORD_T, 16>(data, histo, histo_end, rec_pos, cache);
+			RS_permute_without_cache(data, histo, histo_end, rec_pos);
 		}
 		else if (n_recs_per_this_thread < 10 * 1000 * 1000) //10M
 		{
-			ParadisCacheScatter<RECORD_T, 32>(data, histo, histo_end, rec_pos, cache);
-			PARADIS_permute_without_cache(data, histo, histo_end, rec_pos);		
+			RSCacheScatter<RECORD_T, 32>(data, histo, histo_end, rec_pos, cache);
+			RS_permute_without_cache(data, histo, histo_end, rec_pos);
 		}
 		else
 		{
-			//ParadisCacheScatter<RECORD_T, 128>(data, histo, histo_end, rec_pos, cache);
-			ParadisCacheScatter<RECORD_T, 64>(data, histo, histo_end, rec_pos, cache);
-			ParadisCacheScatter<RECORD_T, 32>(data, histo, histo_end, rec_pos, cache);
-			ParadisCacheScatter<RECORD_T, 16>(data, histo, histo_end, rec_pos, cache);
-			ParadisCacheScatter<RECORD_T, 8>(data, histo, histo_end, rec_pos, cache);			
-			PARADIS_permute_without_cache(data, histo, histo_end, rec_pos);
+			//RSCacheScatter<RECORD_T, 128>(data, histo, histo_end, rec_pos, cache);
+			RSCacheScatter<RECORD_T, 64>(data, histo, histo_end, rec_pos, cache);
+			RSCacheScatter<RECORD_T, 32>(data, histo, histo_end, rec_pos, cache);
+			RSCacheScatter<RECORD_T, 16>(data, histo, histo_end, rec_pos, cache);
+			RSCacheScatter<RECORD_T, 8>(data, histo, histo_end, rec_pos, cache);
+			RS_permute_without_cache(data, histo, histo_end, rec_pos);
 		}
 		
 	}
 
 	template<typename RECORD_T>
-	void ParadisRepair(
+	void RSRepair(
 		RECORD_T* data, 
 		std::vector<uint64_t[256]>& histo_start, 
 		std::vector<uint64_t[256]>& histo_end, 
@@ -1312,7 +1312,7 @@ namespace raduls
 
 	
 	template<typename RECORD_T>
-	void PARADIS_BuildHisto(RECORD_T* A, uint64_t n_recs, uint64_t* histo, uint32_t n_threads, uint32_t rec_pos, uint32_t rec_size)
+	void RS_BuildHisto(RECORD_T* A, uint64_t n_recs, uint64_t* histo, uint32_t n_threads, uint32_t rec_pos, uint32_t rec_size)
 	{
 		uint8_t* src = reinterpret_cast<uint8_t*>(A);
 		auto data = src + rec_pos;
@@ -1345,7 +1345,7 @@ namespace raduls
 	}
 
 	template<typename RECORD_T>
-	FORCE_INLINE void ParadisSimple_SwapRecords(RECORD_T* data, uint64_t* histo, uint64_t* hist_end, uint32_t rec_pos)
+	FORCE_INLINE void RSSimple_SwapRecords(RECORD_T* data, uint64_t* histo, uint64_t* hist_end, uint32_t rec_pos)
 	{
 		for (uint32_t byte = 0; byte < 256; ++byte)
 		{
@@ -1364,7 +1364,7 @@ namespace raduls
 	}
 
 	template<typename RECORD_T>
-	void ParadisSimple(RECORD_T* data, uint64_t n_recs, uint32_t rec_pos, uint32_t last_byte_pos)
+	void RSSimple(RECORD_T* data, uint64_t n_recs, uint32_t rec_pos, uint32_t last_byte_pos)
 	{
 		uint64_t histo[256]{};
 		for (uint64_t i = 0; i < n_recs; ++i)
@@ -1387,7 +1387,7 @@ namespace raduls
 			hist_end[i] = histo[i + 1];
 		hist_end[255] = n_recs;
 
-		ParadisSimple_SwapRecords(data, histo, hist_end, rec_pos);
+		RSSimple_SwapRecords(data, histo, hist_end, rec_pos);
 
 		if (rec_pos > last_byte_pos)
 		{
@@ -1397,7 +1397,7 @@ namespace raduls
 				if (n < 64) //TODO: czy to nie powinno zostaæ pobrane z ustawien i ewentualnie rozwazone wide i nie wide
 					SmallSortDispatch(data + histo_cpy[byte], (RECORD_T*)nullptr, histo[byte] - histo_cpy[byte]);
 				else
-					ParadisSimple(data + histo_cpy[byte], n, rec_pos - 1, last_byte_pos);
+					RSSimple(data + histo_cpy[byte], n, rec_pos - 1, last_byte_pos);
 			}
 		}
 	}
@@ -1485,7 +1485,7 @@ namespace raduls
 	}
 
 	template<typename RECORD_T, unsigned BUFFER_WIDTH>
-	void ParadisCacheScatter_single_thread(RECORD_T* data, uint64_t* histo, uint64_t* histo_end, uint32_t rec_pos, RECORD_T* cache_buff)
+	void RSCacheScatter_single_thread(RECORD_T* data, uint64_t* histo, uint64_t* histo_end, uint32_t rec_pos, RECORD_T* cache_buff)
 	{
 		bool first_store[256];
 		uint64_t histo_begin[256];
@@ -1517,7 +1517,7 @@ namespace raduls
 	}
 
 	template<typename RECORD_T>
-	class ParadisSortTask
+	class RSSortTask
 	{
 		CRadixMSDTaskQueue<RECORD_T>& tasks_queue;
 		uint64 use_queue_min_recs = 0;
@@ -1543,7 +1543,7 @@ namespace raduls
 			Jezeli jednak to nie jest pierwszy zapis to w zasadzie robimy tak samo tylko ze mamy pewnosc ze trzeba zapisac BUFFER_WIDTH rekordow. To jest to co w zasadzie powinno dziaæ siê najczêœciej.
 			Tylko jeszcze jest taka kwestia, ¿e dochodzi tutaj do œciagania rekordów do aktualnego zakresu. To ma tak¹ wadê, ¿e sciagamy pod niewyrownany adres, fajnie by bylo sobie te rekordy kopiowac szybciej tylko nie iwiem czy sie tak da
 		*/		
-		void ParadisCache_firstStore_single_thread(RECORD_T* data, uint64_t n_recs, uint32_t rec_pos, uint32_t last_byte_pos, bool is_narrow)
+		void RSCache_firstStore_single_thread(RECORD_T* data, uint64_t n_recs, uint32_t rec_pos, uint32_t last_byte_pos, bool is_narrow)
 		{
 			if (n_recs < 2)
 				return;
@@ -1551,14 +1551,14 @@ namespace raduls
 			//if (n_recs * sizeof(RECORD_T) < 1 << 16)
 			////if (n_recs * sizeof(RECORD_T) < 1 << 18) //!!!!!! wazne: dla 1G elementow, dla kluczy 3B, rekord 8B, to dziala lepiej, wiec moze inaczje nalezy postawic, albo uzasadnic ta granice, albo moze pomoze gdy BUFFER_WIDTH bedzie zalezne jakos od liczby elementow
 			//{
-			//	ParadisSimple(data, n_recs, rec_pos, last_byte_pos);
+			//	RSSimple(data, n_recs, rec_pos, last_byte_pos);
 			//	return;
 			//}
 
 			//TODO: to sa wyznaczone eksperymentalnie wartosci, dla rekordu 8B
 			if (n_recs < 400 * 1000) //400k
 			{
-				ParadisSimple(data, n_recs, rec_pos, last_byte_pos);
+				RSSimple(data, n_recs, rec_pos, last_byte_pos);
 				return;
 			}
 
@@ -1592,31 +1592,31 @@ namespace raduls
 
 			if (n_recs < 1 * 1000 * 1000) //1M
 			{
-				ParadisCacheScatter_single_thread<RECORD_T, 8>(data, histo, histo_end, rec_pos, cache_buff);
+				RSCacheScatter_single_thread<RECORD_T, 8>(data, histo, histo_end, rec_pos, cache_buff);
 			}
 			else if(n_recs < 2 * 7000 * 1000) //2,7M
 			{
-				ParadisCacheScatter_single_thread<RECORD_T, 16>(data, histo, histo_end, rec_pos, cache_buff);
+				RSCacheScatter_single_thread<RECORD_T, 16>(data, histo, histo_end, rec_pos, cache_buff);
 			}
 			else if (n_recs < 15 * 1000 * 1000) //15M
 			{
-				ParadisCacheScatter_single_thread<RECORD_T, 32>(data, histo, histo_end, rec_pos, cache_buff);
+				RSCacheScatter_single_thread<RECORD_T, 32>(data, histo, histo_end, rec_pos, cache_buff);
 			}
 			else
 			{
 				//tutaj zdaje sie mogloby byc tez wywolanie kilkukrotne 64, 32, 16, i byc moze to by dzialalo nieco szybciej
-				ParadisCacheScatter_single_thread<RECORD_T, 64>(data, histo, histo_end, rec_pos, cache_buff);
-				ParadisCacheScatter_single_thread<RECORD_T, 32>(data, histo, histo_end, rec_pos, cache_buff);
-				ParadisCacheScatter_single_thread<RECORD_T, 16>(data, histo, histo_end, rec_pos, cache_buff);
-				ParadisCacheScatter_single_thread<RECORD_T, 8>(data, histo, histo_end, rec_pos, cache_buff);
+				RSCacheScatter_single_thread<RECORD_T, 64>(data, histo, histo_end, rec_pos, cache_buff);
+				RSCacheScatter_single_thread<RECORD_T, 32>(data, histo, histo_end, rec_pos, cache_buff);
+				RSCacheScatter_single_thread<RECORD_T, 16>(data, histo, histo_end, rec_pos, cache_buff);
+				RSCacheScatter_single_thread<RECORD_T, 8>(data, histo, histo_end, rec_pos, cache_buff);
 			}
 			//UWAGA: na razie sobie 3 krotnie wywoluje z coraz mniejszym cache buff, zeby ograniczyc to ile rekordow potem w ostatecznej korekcie jest wolanych, ale z tym trzebaby potestowac
-			//ParadisCacheScatter_single_thread<RECORD_T, BUFFER_WIDTH>(data, histo, histo_end, rec_pos, cache_buff);
-			//ParadisCacheScatter_single_thread<RECORD_T, BUFFER_WIDTH / 2>(data, histo, histo_end, rec_pos, cache_buff);
-			//ParadisCacheScatter_single_thread<RECORD_T, BUFFER_WIDTH / 4>(data, histo, histo_end, rec_pos, cache_buff);
+			//RSCacheScatter_single_thread<RECORD_T, BUFFER_WIDTH>(data, histo, histo_end, rec_pos, cache_buff);
+			//RSCacheScatter_single_thread<RECORD_T, BUFFER_WIDTH / 2>(data, histo, histo_end, rec_pos, cache_buff);
+			//RSCacheScatter_single_thread<RECORD_T, BUFFER_WIDTH / 4>(data, histo, histo_end, rec_pos, cache_buff);
 
 			
-			ParadisSimple_SwapRecords(data, histo, histo_end, rec_pos);
+			RSSimple_SwapRecords(data, histo, histo_end, rec_pos);
 
 			if (rec_pos > last_byte_pos)
 			{
@@ -1652,7 +1652,7 @@ namespace raduls
 								//if (new_n < SMALL_RADIX_THRESHOLD)
 								//	;//TODO: !!!!!!!!!!!!!!!!!!!!!
 								//else
-								ParadisCache_firstStore_single_thread(data + histo_copy[i], new_n, rec_pos - 1,
+								RSCache_firstStore_single_thread(data + histo_copy[i], new_n, rec_pos - 1,
 									last_byte_pos, check_narrowing(n_recs, new_n));
 						}						
 					}
@@ -1662,7 +1662,7 @@ namespace raduls
 
 
 	public:
-		ParadisSortTask(CRadixMSDTaskQueue<RECORD_T>& tasks_queue, uint64 use_queue_min_recs, RECORD_T* cache_buff) :
+		RSSortTask(CRadixMSDTaskQueue<RECORD_T>& tasks_queue, uint64 use_queue_min_recs, RECORD_T* cache_buff) :
 			tasks_queue(tasks_queue),
 			use_queue_min_recs(use_queue_min_recs),
 			cache_buff(cache_buff)
@@ -1679,7 +1679,7 @@ namespace raduls
 			bool is_narrow;
 			while (tasks_queue.pop(data, tmp, n_recs, rec_pos, last_byte_pos, is_narrow))
 			{
-				this->ParadisCache_firstStore_single_thread(data, n_recs, rec_pos, last_byte_pos, is_narrow);
+				this->RSCache_firstStore_single_thread(data, n_recs, rec_pos, last_byte_pos, is_narrow);
 				tasks_queue.notify_task_finished();
 			}
 		}
@@ -1687,7 +1687,7 @@ namespace raduls
 	};
 
 	template<typename RECORD_T>
-	FORCE_INLINE void PARADIS_multithreaded_permute(RECORD_T* data,
+	FORCE_INLINE void RS_multithreaded_permute(RECORD_T* data,
 		uint64_t* histo_start,
 		uint64_t* histo_end,
 		uint32_t rec_pos,
@@ -1721,14 +1721,14 @@ namespace raduls
 		std::vector<std::thread> threads;
 
 		for (uint32_t tid = 0; tid < n_threads; ++tid)
-			threads.emplace_back(ParadisPermuteThread_first_store<RECORD_T>, data, std::ref(threads_histo_start), std::ref(threads_histo_end), rec_pos, tid, per_thread_recs[tid], thread_cache[tid]);
+			threads.emplace_back(RSPermuteThread_first_store<RECORD_T>, data, std::ref(threads_histo_start), std::ref(threads_histo_end), rec_pos, tid, per_thread_recs[tid], thread_cache[tid]);
 
 		for (auto& th : threads)
 			th.join();
 	}
 
 	template<typename RECORD_T>
-	FORCE_INLINE void PARADIS_multithreaded_repair(RECORD_T* data,
+	FORCE_INLINE void RS_multithreaded_repair(RECORD_T* data,
 		uint32_t n_threads,
 		uint64_t* histo_start,
 		uint64_t* histo_end,
@@ -1746,7 +1746,7 @@ namespace raduls
 			auto end = start + in_fact;
 			threads.emplace_back([data, &threads_histo_start, &threads_histo_end, histo_start = histo_start, histo_end = histo_end, rec_pos, n_threads](uint32_t s, uint32_t e) {
 				for (uint32_t byte = s; byte < e; ++byte)
-					ParadisRepair<RECORD_T>(data, threads_histo_start, threads_histo_end, rec_pos, byte, histo_start, histo_end, n_threads);
+					RSRepair<RECORD_T>(data, threads_histo_start, threads_histo_end, rec_pos, byte, histo_start, histo_end, n_threads);
 			}, start, end);
 
 			start = end;
@@ -1759,7 +1759,7 @@ namespace raduls
 
 	//TODO: docelowo zrobic taka hybryde sortowania zeby sobie mogla potem kolejne podprzedzialiki sortowac z wykorzystaniem dodatkowej pamiêci
 	template<typename RECORD_T>
-	void PARADIS_first_store(RECORD_T* A, uint64_t n_recs, uint32_t rec_size, uint32_t rec_pos, uint32_t last_byte_pos, uint32_t n_threads,
+	void RS_first_store(RECORD_T* A, uint64_t n_recs, uint32_t rec_size, uint32_t rec_pos, uint32_t last_byte_pos, uint32_t n_threads,
 		bool is_first_level, uint64 is_big_threshold, RECORD_T** thread_cache, uint64_t n_total_recs)
 	{
 		constexpr uint64_t current_small_sort_threshold = GetSmallSortThreshold(RECORD_T::RECORD_SIZE);
@@ -1771,7 +1771,7 @@ namespace raduls
 		if (n_threads == 1)
 		{
 			CRadixMSDTaskQueue<RECORD_T> tmp_queue;
-			ParadisSortTask<RECORD_T> task(tmp_queue, std::numeric_limits<uint64_t>::max(), *thread_cache);
+			RSSortTask<RECORD_T> task(tmp_queue, std::numeric_limits<uint64_t>::max(), *thread_cache);
 			tmp_queue.push(A, nullptr, n_recs, rec_pos, last_byte_pos, false);
 			task();			
 			return;
@@ -1783,7 +1783,7 @@ namespace raduls
 		uint64_t histo[256]{};
 		auto data = src + rec_pos;
 		auto s = std::chrono::high_resolution_clock::now();//dbg
-		PARADIS_BuildHisto(A, n_recs, histo, n_threads, rec_pos, rec_size);
+		RS_BuildHisto(A, n_recs, histo, n_threads, rec_pos, rec_size);
 		auto e = std::chrono::high_resolution_clock::now();//dbg		
 		//accumulate histo 
 		uint64_t prev = 0;
@@ -1807,8 +1807,8 @@ namespace raduls
 
 		while (AnyBucketNotEmpty(histo, histo_end))
 		{
-			PARADIS_multithreaded_permute(A, histo, histo_end, rec_pos, n_threads, thread_cache, threads_histo_start, threads_histo_end);
-			PARADIS_multithreaded_repair(A, n_threads, histo, histo_end, rec_pos, threads_histo_start, threads_histo_end);
+			RS_multithreaded_permute(A, histo, histo_end, rec_pos, n_threads, thread_cache, threads_histo_start, threads_histo_end);
+			RS_multithreaded_repair(A, n_threads, histo, histo_end, rec_pos, threads_histo_start, threads_histo_end);
 		}
 		
 		if (rec_pos > last_byte_pos)
@@ -1824,7 +1824,7 @@ namespace raduls
 					if (n > is_big_threshold)
 					{
 						if (!is_first_level)
-							PARADIS_first_store(A + histo_copy[i], n, rec_size, rec_pos - 1, last_byte_pos,
+							RS_first_store(A + histo_copy[i], n, rec_size, rec_pos - 1, last_byte_pos,
 								n_threads, false, is_big_threshold, thread_cache, n_total_recs);
 						else
 							big_bins.emplace_back(A + histo_copy[i], n),
@@ -1843,7 +1843,7 @@ namespace raduls
 			auto n_threads_for_small_bins = n_threads - n_threads_for_big_bins;
 
 			std::vector<std::thread> threads;
-			using SORTER_T = ParadisSortTask<RECORD_T>;
+			using SORTER_T = RSSortTask<RECORD_T>;
 			std::vector<std::unique_ptr<SORTER_T>> sorters;
 			auto use_queue_min_recs = n_recs / 4096;
 			for (n_threads_for_small_bins_running = 0; n_threads_for_small_bins_running < n_threads_for_small_bins; ++n_threads_for_small_bins_running)
@@ -1853,7 +1853,7 @@ namespace raduls
 				threads.emplace_back(std::ref(*sorters.back().get()));
 			}
 			for (auto& big_bin : big_bins)
-				PARADIS_first_store(std::get<0>(big_bin), std::get<1>(big_bin), rec_size,
+				RS_first_store(std::get<0>(big_bin), std::get<1>(big_bin), rec_size,
 					rec_pos - 1, last_byte_pos, n_threads_for_big_bins, false, is_big_threshold, 
 					thread_cache + n_threads_for_small_bins_running, n_total_recs);
 
@@ -1905,14 +1905,14 @@ namespace raduls
 
 	//TODO: mozna jeszcze rozpatrzec counter size, podobnie jak jest w radulsie
 	template<typename RECORD_T>
-	void RadixSortMSD_template(RECORD_T* data, RECORD_T* /*tmp not used for PARADIS*/, uint64_t n_recs, uint32_t rec_size_in_bytes, uint32_t key_size_in_bytes, uint32_t last_byte_pos, uint32_t n_threads)
+	void RadixSortMSD_template(RECORD_T* data, RECORD_T* /*tmp not used for RS*/, uint64_t n_recs, uint32_t rec_size_in_bytes, uint32_t key_size_in_bytes, uint32_t last_byte_pos, uint32_t n_threads)
 	{
 		uint64_t is_big_threshold = 2 * n_recs / (3 * n_threads);
 		if (is_big_threshold < 4 * n_recs / 256)
 			is_big_threshold = 4 * n_recs / 256;
 
 		CacheBuffManager<RECORD_T> cache_buff_manager(n_threads);
-		PARADIS_first_store(data, n_recs, rec_size_in_bytes, key_size_in_bytes - 1, last_byte_pos, n_threads, true, is_big_threshold, cache_buff_manager.thread_cache, n_recs);		
+		RS_first_store(data, n_recs, rec_size_in_bytes, key_size_in_bytes - 1, last_byte_pos, n_threads, true, is_big_threshold, cache_buff_manager.thread_cache, n_recs);
 	}
 
 #ifdef DISPATCH_ONLY_REC_SIZE	
