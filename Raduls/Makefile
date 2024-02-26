@@ -8,7 +8,7 @@ ifeq ($(KEY_SIZE_EQ_REC_SIZE), true)
 	CFLAGS += -DDISPATCH_ONLY_REC_SIZE
 endif
 	
-libraduls.a: sorting_network.o raduls_impl.o raduls_AVX.o raduls_AVX2.o raduls_SSE2.o exceptions.o
+libraduls.a: sorting_network.o raduls_impl.o raduls_AVX.o raduls_AVX2.o raduls_SSE2.o raduls_NEON.o exceptions.o
 	ar rcs $@ $^
 
 excetions.o: exceptions.cpp
@@ -29,6 +29,9 @@ raduls_AVX2.o: raduls_AVX2.cpp
 raduls_SSE2.o: raduls_SSE2.cpp
 	$(CXX) -msse2 $(CFLAGS) -c $< -o $@
 	
+raduls_NEON.o: raduls_NEON.cpp
+	$(CXX) -mneon $(CFLAGS) -c $< -o $@
+
 clean:
 	rm *.o
 	rm libraduls.a

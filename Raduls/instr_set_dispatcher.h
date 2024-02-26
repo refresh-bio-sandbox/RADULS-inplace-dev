@@ -29,6 +29,14 @@ namespace raduls
 	};
 #endif
 
+#ifdef COMPILE_FOR_NEON
+	class CInstrSetNEON : public CInstrSetBase
+	{
+	public:
+		void Run(const SortParams& p) override;
+	};
+#endif
+
 	class CInstrSetSSE2 : public CInstrSetBase
 	{
 	public:
