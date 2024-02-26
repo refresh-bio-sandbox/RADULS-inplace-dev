@@ -256,7 +256,7 @@ namespace raduls
 			int64_t* dest = (int64_t*)_dest;
 			int64_t* src = (int64_t*)_src;
 
-			for (unsigned i = 0; i < size; ++i)
+			for (unsigned i = 0; i < SIZE; ++i)
 				vst1_s64(dest + i, vdup_n_s64(src[i]));
 #endif
 		}
@@ -290,7 +290,7 @@ namespace raduls
 #if __has_builtin(__builtin_nontemporal_store)
 				__builtin_nontemporal_store(*src, dest);
 #else
-				vst1q_s64((int64_t*)(p+i), src[i]);
+				vst1q_s64((int64_t*)(dest+i), src[i]);
 #endif
 #endif
 		}
