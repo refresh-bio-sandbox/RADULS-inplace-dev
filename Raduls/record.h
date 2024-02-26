@@ -15,7 +15,7 @@ namespace raduls
 
 			FORCE_INLINE bool operator<(const Record<_RECORD_SIZE, _KEY_SIZE>& rhs)
 			{
-				for (int32 i = _KEY_SIZE - 1; i >= 0; --i)
+				for (int32_t i = _KEY_SIZE - 1; i >= 0; --i)
 					if (data[i] < rhs.data[i])
 						return true;
 					else if (data[i] > rhs.data[i])
@@ -25,7 +25,7 @@ namespace raduls
 
 			FORCE_INLINE bool operator==(const Record<_RECORD_SIZE, _KEY_SIZE>& rhs)
 			{
-				for (uint32 i = 0; i < _KEY_SIZE; ++i)
+				for (uint32_t i = 0; i < _KEY_SIZE; ++i)
 					if (data[i] != rhs.data[i])
 						return false;
 				return true;

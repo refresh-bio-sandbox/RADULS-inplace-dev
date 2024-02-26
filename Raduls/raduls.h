@@ -2,8 +2,8 @@
 #include <stdexcept>
 #include <cstdint>
 
-#define RADULS_VER  "2.0.0"
-#define RADULS_DATE "2017-10-22"
+#define RADULS_VER  "2.1.0"
+#define RADULS_DATE "2024-02-26"
 
 namespace raduls
 {		

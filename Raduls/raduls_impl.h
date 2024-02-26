@@ -340,7 +340,7 @@ namespace raduls
 			if (first_store[byteValue])
 			{
 				first_store[byteValue] = false;
-				int64 offset = copy_histo[byteValue] % BUFFER_WIDTH;
+				int64_t offset = copy_histo[byteValue] % BUFFER_WIDTH;
 				IntrCopy64fun(&tmp[histo[byteValue] - BUFFER_WIDTH + offset], &buffer[byteValue * BUFFER_WIDTH + offset], RECORD_T::RECORD_SIZE * (BUFFER_WIDTH - offset));
 			}
 			else
@@ -353,7 +353,7 @@ namespace raduls
 	template<typename RECORD_T, typename COUNTER_TYPE, uint32_t BUFFER_WIDTH>
 	FORCE_INLINE void BufferedScattterCorrectionStep(RECORD_T* tmp, COUNTER_TYPE* histo, COUNTER_TYPE* copy_histo, RECORD_T* buffer)
 	{
-		int64 elemInBuffer, index_stop, index_start, elemWrittenIntoBuffer;
+		int64_t elemInBuffer, index_stop, index_start, elemWrittenIntoBuffer;
 		for (uint32_t i = 0; i < 256; ++i)
 		{
 			index_stop = histo[i] % BUFFER_WIDTH;
@@ -612,7 +612,7 @@ namespace raduls
 			auto ptr = reinterpret_cast<uint8_t*>(data) + byte;
 			alignas(ALIGNMENT)COUNTER_TYPE globalHisto[256] = {};
 			alignas(ALIGNMENT)COUNTER_TYPE copy_globalHisto[257];
-			uint64 largest_bin_size = 0;
+			uint64_t largest_bin_size = 0;
 
 			BuildHisto<RECORD_T, COUNTER_TYPE>(globalHisto, n_recs, ptr);
 
@@ -637,7 +637,7 @@ namespace raduls
 				SimpleScatter(src, tmp, globalHisto, n_recs, ptr);
 			else
 			{
-				//constexpr uint32 BUFFER_WIDTH = BUFFER_WIDTHS[sizeof(RECORD_T) / 8];
+				//constexpr uint32_t BUFFER_WIDTH = BUFFER_WIDTHS[sizeof(RECORD_T) / 8];
 				constexpr uint32_t BUFFER_WIDTH = GetBufferWidth(sizeof(RECORD_T) / 8);
 				constexpr uint32_t BUFFER_WIDTH_IN_128BIT_WORDS = BUFFER_WIDTH * sizeof(RECORD_T) / 16;
 
@@ -751,18 +751,18 @@ namespace raduls
 		void SmallRadixSort(RECORD_T* data, RECORD_T* tmp, uint64_t n_recs, uint32_t byte, uint32_t last_byte_pos)
 		{
 			auto ptr = reinterpret_cast<uint8_t*>(data) + byte;
-			alignas(ALIGNMENT)uint32 globalHisto[256] = {};
-			alignas(ALIGNMENT)uint32 copy_globalHisto[257];
+			alignas(ALIGNMENT)uint32_t globalHisto[256] = {};
+			alignas(ALIGNMENT)uint32_t copy_globalHisto[257];
 			int to_sort[256];		// bins to sort (at least 2 elements in bin)
 			int idx_to_sort = 0;
 			bool must_copy_tmp = (byte - last_byte_pos) % 2;
 
-			BuildHisto<RECORD_T, uint32>(globalHisto, n_recs, ptr);
+			BuildHisto<RECORD_T, uint32_t>(globalHisto, n_recs, ptr);
 
-			uint32 prevSum = 0;
+			uint32_t prevSum = 0;
 			for (int i = 0; i < 256; ++i)
 			{
-				uint32 n_elems = globalHisto[i];
+				uint32_t n_elems = globalHisto[i];
 				globalHisto[i] = prevSum;
 				copy_globalHisto[i] = prevSum;
 				prevSum += n_elems;
@@ -850,7 +850,7 @@ namespace raduls
 			alignas(ALIGNMENT)COUNTER_TYPE globalHisto[257] = {};
 
 
-			for (uint32 th_id = 0; th_id < n_threads; ++th_id)
+			for (uint32_t th_id = 0; th_id < n_threads; ++th_id)
 				threads.emplace_back(FirstPassStage1<RECORD_T, COUNTER_TYPE>,
 					data, std::ref(histos), byte, std::ref(range_queue));
 
@@ -863,7 +863,7 @@ namespace raduls
 			for (int i = 0; i < 256; ++i)
 			{
 				COUNTER_TYPE prevSum = 0;
-				for (uint32 n = 0; n < n_parts; ++n)
+				for (uint32_t n = 0; n < n_parts; ++n)
 				{
 					auto tmp = histos[n][i];
 					histos[n][i] = prevSum;
@@ -880,7 +880,7 @@ namespace raduls
 				prevSum += tmp;
 			}
 
-			for (uint32 n = 0; n < n_parts; ++n)
+			for (uint32_t n = 0; n < n_parts; ++n)
 				for (int i = 0; i < 256; ++i)
 					histos[n][i] += globalHisto[i];
 
@@ -894,7 +894,7 @@ namespace raduls
 			while ((uint64_t)s % ALIGNMENT)
 				++s;
 			std::vector<uint8_t*> buffers(n_parts);
-			for (uint32 i = 0; i < n_parts; ++i)
+			for (uint32_t i = 0; i < n_parts; ++i)
 				buffers[i] = s + single_part_size * i;
 
 			std::vector<COUNTER_TYPE[256]> threads_histos(n_parts);
@@ -905,14 +905,14 @@ namespace raduls
 				while ((uint64_t)tmp % 64)
 					tmp--, tmp_moved_by++;
 
-				for (uint32 n = 0; n < n_parts; ++n)
+				for (uint32_t n = 0; n < n_parts; ++n)
 					for (int i = 0; i < 256; ++i)
 						histos[n][i] += tmp_moved_by;
 			}
 
 			auto fun = is_first_level ? FirstPassStage2<RECORD_T, COUNTER_TYPE> : BigBinsScatter<RECORD_T, COUNTER_TYPE>;
 
-			for (uint32 th_id = 0; th_id < n_threads; ++th_id)
+			for (uint32_t th_id = 0; th_id < n_threads; ++th_id)
 				threads.emplace_back(fun,
 					data, tmp, byte,
 					std::ref(histos), std::ref(buffers), std::ref(threads_histos),
@@ -924,7 +924,7 @@ namespace raduls
 
 			//stage 3
 			range_queue.reset_indices();
-			for (uint32 th_id = 0; th_id < n_threads; ++th_id)
+			for (uint32_t th_id = 0; th_id < n_threads; ++th_id)
 				threads.emplace_back(FirstPassStage3<RECORD_T, COUNTER_TYPE>,
 					tmp, std::ref(histos), std::ref(buffers), std::ref(threads_histos),
 					std::ref(range_queue));
@@ -936,7 +936,7 @@ namespace raduls
 			if (!is_first_level)
 			{
 				tmp += tmp_moved_by;
-				for (uint32 n = 0; n < n_parts; ++n)
+				for (uint32_t n = 0; n < n_parts; ++n)
 					for (int i = 0; i < 256; ++i)
 						histos[n][i] -= tmp_moved_by;
 			}
@@ -952,7 +952,7 @@ namespace raduls
 				uint64_t n_recs_in_big_bins = 0;
 
 				globalHisto[256] = n_recs;
-				for (uint32 i = 1; i < 257; ++i)
+				for (uint32_t i = 1; i < 257; ++i)
 				{
 					auto n = static_cast<uint64_t>(globalHisto[i] - globalHisto[i - 1]);
 					if (n > 0)
@@ -975,9 +975,9 @@ namespace raduls
 
 				std::sort(big_bins.begin(), big_bins.end(), [](const auto& x, const auto& y) {return std::get<2>(x) > std::get<2>(y); });
 
-				auto n_threads_for_big_bins = std::min(n_threads, static_cast<uint32>(ceil(n_threads * n_recs_in_big_bins * 5.0 / (4 * n_total_recs))));
+				auto n_threads_for_big_bins = std::min(n_threads, static_cast<uint32_t>(ceil(n_threads * n_recs_in_big_bins * 5.0 / (4 * n_total_recs))));
 
-				uint32 n_threads_for_small_bins_running;
+				uint32_t n_threads_for_small_bins_running;
 				auto n_threads_for_small_bins = n_threads - n_threads_for_big_bins;
 
 				using SORTER_T = CRadixSorterMSD<RECORD_T, COUNTER_TYPE>;

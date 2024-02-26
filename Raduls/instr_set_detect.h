@@ -8,8 +8,9 @@
 
 namespace InstrSetDetect
 {
-	enum class Instr { NotSet, SSE, SSE2, SSE3, SSE4_1, SSE4_2, AVX, AVX2 };
+	enum class Instr { NotSet, SSE, SSE2, SSE3, SSE4_1, SSE4_2, AVX, AVX2, NEON };
 
+#ifdef ARCH_X64
 	static void cpuid(uint32_t eax, uint32_t ecx, uint32_t* abcd)
 	{
 #if _MSC_VER
@@ -57,4 +58,10 @@ namespace InstrSetDetect
 
 		return instr;
 	}
+#else
+	static Instr GetInstr()
+	{
+		return Instr::NEON;
+	}
+#endif
 };

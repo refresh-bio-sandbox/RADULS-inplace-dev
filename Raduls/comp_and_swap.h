@@ -133,7 +133,7 @@ namespace raduls
 			{
 				FORCE_INLINE bool operator()(const RECORD_T& lhs, const RECORD_T& rhs)
 				{
-					for (int32 i = RECORD_T::KEY_SIZE - 1; i >= 0; --i)
+					for (int32_t i = RECORD_T::KEY_SIZE - 1; i >= 0; --i)
 						if (lhs.data[i] < rhs.data[i])
 							return true;
 						else if (lhs.data[i] > rhs.data[i])
