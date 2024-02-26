@@ -67,9 +67,6 @@ namespace raduls
 #ifdef COMPILE_FOR_AVX2
 			static CInstrSetAVX2 avx2;
 #endif
-#ifdef COMPILE_FOR_NEON
-			static CInstrSetNEON neon;
-#endif
 
 			auto instr_set = InstrSetDetect::GetInstr();
 
@@ -95,6 +92,10 @@ namespace raduls
 #elif defined(ARCH_ARM)
 		CInstrSetDispatcher()
 		{
+#ifdef COMPILE_FOR_NEON
+			static CInstrSetNEON neon;
+#endif
+
 			runner = &neon;
 		}
 #endif
