@@ -23,6 +23,8 @@
 
 namespace raduls
 {
+	namespace NAMESPACE_NAME
+	{
 	//config	
 //	constexpr int32_t BUFFER_WIDTHS[] = { -1, 32, 16, 16, 8, 8, 4, 8, 4 };
 //	constexpr int32_t BUFFER_WIDTHS[] = { -1, 64, 16, 16, 8, 8, 4, 8, 4 };
@@ -1006,8 +1008,7 @@ namespace raduls
 	};
 
 	//TODO: poki co spradzam sobie po kolei wszystkie buckety, ale mylse ze daloby sie na bierzaco gdzies zliczac ile jest niepustych 
-	template<unsigned AUX=0>
-	bool AnyBucketNotEmpty(uint64_t* start, uint64_t* end)
+	inline bool AnyBucketNotEmpty(uint64_t* start, uint64_t* end)
 	{
 		for (uint32_t byte = 0; byte < 256; ++byte)
 			if (end[byte] - start[byte])
@@ -1015,8 +1016,7 @@ namespace raduls
 		return false;
 	}
 
-	template<unsigned AUX = 0>
-	uint64_t GetNumberOfElementsLeft(const std::vector<uint64_t[256]>& start, const std::vector<uint64_t[256]>& end, uint32_t n_threads)
+	inline uint64_t GetNumberOfElementsLeft(const std::vector<uint64_t[256]>& start, const std::vector<uint64_t[256]>& end, uint32_t n_threads)
 	{
 		uint64_t res{};
 		for (uint32_t tid = 0; tid < n_threads; ++tid)
@@ -2018,6 +2018,7 @@ namespace raduls
 	void RunWrapper(const SortParams& p)
 	{
 		RecSizeDispatcher<MAX_REC_SIZE_IN_BYTES / 8>::Dispatch(p);
+	}
 	}
 }
 

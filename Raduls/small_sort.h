@@ -11,6 +11,8 @@
 
 namespace raduls
 {
+	namespace NAMESPACE_NAME
+	{
 	namespace small_sort
 	{
 		template<typename T, typename Comp, typename FinishingSorter>
@@ -7310,4 +7312,5 @@ namespace raduls
 
 		template<typename RECORD_T> HybridSmallSortImpl<RECORD_T> HybridSmallSort<RECORD_T>::impl;
 	}
+}
 }

@@ -18,15 +18,12 @@ using __int64 = long long int;
 //raduls will automatically detect which instruction set is supported on a givent machine during execution
 //From current experiments it seems that sse2 is enaugh, so those defines are commented because its affects library size in a significant way
 
-#define COMPILE_FOR_AVX2
+#ifdef _MSC_VER
+#define COMPILE_FOR_SSE2
 #define COMPILE_FOR_AVX
-//#define COMPILE_FOR_NEON
+#define COMPILE_FOR_AVX2
+#else
+// defined in makefile
+#endif
 
-namespace raduls
-{
-//	using uchar = unsigned char;
-//	using int32 = int32_t;
-//	using uint32 = uint32_t;
-//	using int64 = int64_t;
-//	using uint64 = uint64_t;
-}
+//#define COMPILE_FOR_NEON

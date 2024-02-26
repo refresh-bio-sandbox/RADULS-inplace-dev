@@ -51,6 +51,9 @@
     <ClInclude Include="raduls_headers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="sorting_network_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sorting_network.cpp">
@@ -78,6 +81,18 @@
       <Filter>Library Files</Filter>
     </ClCompile>
     <ClCompile Include="raduls_NEON.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sorting_network_SSE2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sorting_network_AVX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sorting_network_AVX2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sorting_network_NEON.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
