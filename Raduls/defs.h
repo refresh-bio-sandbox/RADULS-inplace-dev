@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <cstddef>
 
 #ifdef __GNUG__
 #define FORCE_INLINE inline __attribute__((always_inline))
@@ -19,13 +20,13 @@ using __int64 = long long int;
 
 #define COMPILE_FOR_AVX2
 #define COMPILE_FOR_AVX
-#define COMPILE_FOR_NEON
+//#define COMPILE_FOR_NEON
 
 namespace raduls
 {
-	using uchar = unsigned char;
-	using int32 = int32_t;
-	using uint32 = uint32_t;
-	using int64 = int64_t;
-	using uint64 = uint64_t;
+//	using uchar = unsigned char;
+//	using int32 = int32_t;
+//	using uint32 = uint32_t;
+//	using int64 = int64_t;
+//	using uint64 = uint64_t;
 }

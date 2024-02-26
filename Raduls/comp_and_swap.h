@@ -192,7 +192,7 @@ namespace raduls
 		template<typename RECORD_T>
 		struct FinishingWrapper
 		{
-			FORCE_INLINE void operator()(RECORD_T* data, uint32 size)
+			FORCE_INLINE void operator()(RECORD_T* data, uint32_t size)
 			{
 				ins_sort1a(data, data + size, LessFirstLower<RECORD_T>{});
 			}
@@ -201,7 +201,7 @@ namespace raduls
 		template<typename RECORD_T>
 		struct FakeFinishingSorter
 		{
-			FORCE_INLINE void operator()(RECORD_T*, uint32) {};
+			FORCE_INLINE void operator()(RECORD_T*, uint32_t) {};
 		};
 
 		template<typename RECORD_T>

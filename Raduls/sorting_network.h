@@ -12,11 +12,11 @@ namespace raduls
 		template<typename T, typename CompAndSwap>
 		struct SortingNetwork
 		{
-			static const uint32 MAX_SUPPORTED_SIZE = 64;
+			static const uint32_t MAX_SUPPORTED_SIZE = 64;
 			SortingNetwork();
 
 			std::vector < std::function<void(T*)>> funcs;
-			FORCE_INLINE void operator()(T* arr, uint32 size)
+			FORCE_INLINE void operator()(T* arr, uint32_t size)
 			{
 				funcs[size](arr);
 			}

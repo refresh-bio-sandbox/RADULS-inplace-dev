@@ -17,7 +17,7 @@ namespace raduls
 		struct RankOrder
 		{
 			Comp comp;
-			static const uint32 MAX_SUPPORTED_SIZE = 64;
+			static const uint32_t MAX_SUPPORTED_SIZE = 64;
 			RankOrder() : funcs(1 + MAX_SUPPORTED_SIZE)
 			{
 				this->funcs[0] = [](T* A) {};
@@ -56,7 +56,7 @@ namespace raduls
 			}
 			std::vector < std::function<void(T*)>> funcs;
 
-			void operator()(T* arr, uint32 size)
+			void operator()(T* arr, uint32_t size)
 			{
 				funcs[size](arr);
 			}
@@ -7142,7 +7142,7 @@ namespace raduls
 		{
 			using SmallSorter_ro_ins = RankOrder<RECORD_T, MS_uint64_lower<RECORD_T>, FinishingWrapper<RECORD_T>>;
 			SmallSorter_ro_ins smallSorter_ro_ins;
-			void operator()(RECORD_T* data, uint32 size)
+			void operator()(RECORD_T* data, uint32_t size)
 			{
 				if (size == 2)
 					smallSorter_ro_ins.sort2(data);
@@ -7165,7 +7165,7 @@ namespace raduls
 
 			SamllSorter_ro small_sorter_ro;
 
-			void operator()(RECORD_T* data, uint32 size)
+			void operator()(RECORD_T* data, uint32_t size)
 			{
 				if (size == 2)
 					small_sorter_ro.sort2(data);
@@ -7190,7 +7190,7 @@ namespace raduls
 			SamllSorter_ro_ins_sort small_sorter_ro_ins;
 			SamllSorter_ro small_sorter_ro;
 
-			void operator()(RECORD_T* data, uint32 size)
+			void operator()(RECORD_T* data, uint32_t size)
 			{
 				if (size == 2)
 					small_sorter_ro.sort2(data);
@@ -7211,7 +7211,7 @@ namespace raduls
 				FakeFinishingSorter<RECORD_T>>;
 
 			SamllSorter_ro small_sorter_ro;
-			void operator()(RECORD_T* data, uint32 size)
+			void operator()(RECORD_T* data, uint32_t size)
 			{
 				if (size == 2)
 					small_sorter_ro.sort2(data);
@@ -7236,7 +7236,7 @@ namespace raduls
 			SamllSorter_ro_ins_sort small_sorter_ro_ins;
 			SamllSorter_ro small_sorter_ro;
 
-			void operator()(RECORD_T* data, uint32 size)
+			void operator()(RECORD_T* data, uint32_t size)
 			{
 				if (size == 2)
 					small_sorter_ro.sort2(data);
@@ -7260,7 +7260,7 @@ namespace raduls
 
 			SamllSorter_ro small_sorter_ro;
 			SmallSorter_sn1 small_sorter_sn1;
-			void operator()(RECORD_T* data, uint32 size)
+			void operator()(RECORD_T* data, uint32_t size)
 			{
 				if (size == 2)
 					small_sorter_ro.sort2(data);
@@ -7284,7 +7284,7 @@ namespace raduls
 				SwapLowerGreater<RECORD_T, LessFirstNotEqual<RECORD_T>>>;
 
 			SmallSorter small_sorter;
-			void operator()(RECORD_T* data, uint32 size)
+			void operator()(RECORD_T* data, uint32_t size)
 			{
 				if (size == 2)
 					small_sorter.sort2(data);
@@ -7302,7 +7302,7 @@ namespace raduls
 		struct HybridSmallSort
 		{
 			static HybridSmallSortImpl<RECORD_T> impl;			
-			FORCE_INLINE void operator()(RECORD_T* data, uint32 size)
+			FORCE_INLINE void operator()(RECORD_T* data, uint32_t size)
 			{				
 				impl(data, size);
 			}

@@ -6,10 +6,10 @@ namespace raduls
 	template<unsigned _RECORD_SIZE, unsigned _KEY_SIZE>
 	struct Record
 	{
-		static const uint32 RECORD_SIZE = _RECORD_SIZE;
-		static const uint32 KEY_SIZE = _KEY_SIZE;
+		static const uint32_t RECORD_SIZE = _RECORD_SIZE;
+		static const uint32_t KEY_SIZE = _KEY_SIZE;
 
-		uint64 data[_RECORD_SIZE];
+		uint64_t data[_RECORD_SIZE];
 
 		FORCE_INLINE bool operator<(const Record<_RECORD_SIZE, _KEY_SIZE>& rhs)
 		{
@@ -33,10 +33,10 @@ namespace raduls
 	template<unsigned _RECORD_SIZE>
 	struct Record<_RECORD_SIZE, 2>
 	{
-		static const uint32 RECORD_SIZE = _RECORD_SIZE;
-		static const uint32 KEY_SIZE = 2;
+		static const uint32_t RECORD_SIZE = _RECORD_SIZE;
+		static const uint32_t KEY_SIZE = 2;
 
-		uint64 data[_RECORD_SIZE];
+		uint64_t data[_RECORD_SIZE];
 
 		FORCE_INLINE bool operator<(const Record<_RECORD_SIZE, 2>& rhs)
 		{
@@ -52,10 +52,10 @@ namespace raduls
 	template<unsigned _RECORD_SIZE>
 	struct Record<_RECORD_SIZE, 1>
 	{
-		static const uint32 RECORD_SIZE = _RECORD_SIZE;
-		static const uint32 KEY_SIZE = 1;
+		static const uint32_t RECORD_SIZE = _RECORD_SIZE;
+		static const uint32_t KEY_SIZE = 1;
 
-		uint64 data[_RECORD_SIZE];
+		uint64_t data[_RECORD_SIZE];
 
 		FORCE_INLINE bool operator<(const Record<_RECORD_SIZE, 1>& rhs)
 		{
@@ -71,10 +71,10 @@ namespace raduls
 	template<>
 	struct Record<1, 1>
 	{
-		static const uint32 RECORD_SIZE = 1;
-		static const uint32 KEY_SIZE = 1;
+		static const uint32_t RECORD_SIZE = 1;
+		static const uint32_t KEY_SIZE = 1;
 
-		uint64 data;
+		uint64_t data;
 
 		FORCE_INLINE bool operator<(const Record<1, 1>& rhs)
 		{

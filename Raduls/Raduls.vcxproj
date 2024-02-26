@@ -153,6 +153,7 @@
     <ClInclude Include="instr_set_detect.h" />
     <ClInclude Include="instr_set_dispatcher.h" />
     <ClInclude Include="raduls.h" />
+    <ClInclude Include="raduls_headers.h" />
     <ClInclude Include="raduls_impl.h" />
     <ClInclude Include="record.h" />
     <ClInclude Include="small_sort.h" />
