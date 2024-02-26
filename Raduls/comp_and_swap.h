@@ -1,7 +1,25 @@
 #pragma once
 #include "defs.h"
+#if defined(ARCH_X64)
 #include "xmmintrin.h"
 #include <emmintrin.h>
+#elif defined(ARCH_ARM)
+#include <arm_neon.h>
+#endif
+
+/*
+* https://arm-software.github.io/acle/neon_intrinsics/advsimd.html
+* https://github.com/DLTcollab/sse2neon/blob/master/sse2neon.h
+x64							arm
+_mm_loadu_si128				vld1q_u64
+_mm_storeu_si128			vst1q_u64
+
+_mm_stream_si64				
+_mm_stream_si128			
+_mm_load_si128				vld1q_s64	
+_mm_sfence					
+*/
+
 namespace raduls
 {
 	namespace NAMESPACE_NAME
@@ -52,10 +70,19 @@ namespace raduls
 				using RECORD_T = Record<2, 1>;
 				FORCE_INLINE void operator()(RECORD_T& lhs, RECORD_T& rhs)
 				{
+#if defined(ARCH_X64)
 					__m128i a = _mm_loadu_si128(Comp{}(lhs, rhs) ? (const __m128i*)lhs.data : (const __m128i*)rhs.data);
 					__m128i b = _mm_loadu_si128(!Comp{}(lhs, rhs) ? (const __m128i*)lhs.data : (const __m128i*)rhs.data);
 					_mm_storeu_si128((__m128i*)lhs.data, a);
 					_mm_storeu_si128((__m128i*)rhs.data, b);
+#elif defined(ARCH_ARM)
+					uint64x2_t a = vld1q_u64(Comp{}(lhs, rhs) ? (const uint64x2_t*)lhs.data : (const uint64x2_t*)rhs.data);
+					uint64x2_t b = vld1q_u64(!Comp{}(lhs, rhs) ? (const uint64x2_t*)lhs.data : (const uint64x2_t*)rhs.data);
+					vst1q_u64((uint64x2_t*)lhs.data, a);
+					vst1q_u64((uint64x2_t*)rhs.data, b);
+#else
+					static_assert(0);
+#endif
 				}
 			};
 

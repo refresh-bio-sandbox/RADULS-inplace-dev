@@ -18,9 +18,16 @@
 #include <cstring>
 #include <condition_variable>
 #include <memory>
-#include<cassert>
+#include <cassert>
+
+#include "defs.h"
+#if defined(ARCH_X64)
 #include <emmintrin.h>
 #include <immintrin.h>
+#elif defined(ARCH_ARM)
+#include <arm_neon.h>
+#endif
+
 
 namespace raduls
 {
@@ -194,11 +201,19 @@ namespace raduls
 	// dest and src must be aligned to 8B
 	inline void IntrCopy64fun(void* _dest, void* _src, uint32_t size)
 	{
+#if defined(ARCH_X64)
 		__int64* dest = (__int64*)_dest;
 		__int64* src = (__int64*)_src;
 
 		for (unsigned i = 0; i < size; ++i)
 			_mm_stream_si64(dest + i, src[i]);
+#elif defined(ARCH_ARM)
+		int64_t* dest = (int64_t*)_dest;
+		int64_t* src = (int64_t*)_src;
+
+		for (unsigned i = 0; i < size; ++i)
+			vst1_s64(dest + i, vdup_n_s64(src[i]));
+#endif
 	}
 
 	// 64bit copy function
@@ -207,11 +222,19 @@ namespace raduls
 	{
 		static inline void Copy(void* _dest, void* _src)
 		{
+#if defined(ARCH_X64)
 			__int64* dest = (__int64*)_dest;
 			__int64* src = (__int64*)_src;
 
 			for (unsigned i = 0; i < SIZE; ++i)
 				_mm_stream_si64(dest + i, src[i]);
+#elif defined(ARCH_ARM)
+			int64_t* dest = (int64_t*)_dest;
+			int64_t* src = (int64_t*)_src;
+
+			for (unsigned i = 0; i < size; ++i)
+				vst1_s64(dest + i, vdup_n_s64(src[i]));
+#endif
 		}
 	};
 
@@ -229,11 +252,21 @@ namespace raduls
 	{
 		static inline void Copy(void* _dest, void* _src)
 		{
+#if defined(ARCH_X64)
 			__m128i* dest = (__m128i*) _dest;
 			__m128i* src = (__m128i*) _src;
 
 			for (unsigned i = 0; i < SIZE; ++i)
 				_mm_stream_si128(dest + i, _mm_load_si128(src + i));
+#elif defined(ARCH_ARM)
+			int64x2_t* dest = (int64x2_t*) _dest;
+			int64x2_t* src = (int64x2_t*) _src;
+
+			for (unsigned i = 0; i < SIZE; ++i)
+				__builtin_nontemporal_store(*src, dest);
+#else
+				vst1q_s64((int64_t*)(p+i), src[i]);
+#endif
 		}
 	};
 
