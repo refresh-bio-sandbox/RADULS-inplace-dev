@@ -101,8 +101,8 @@ namespace raduls
 #elif defined(ARCH_ARM)
 					uint64x2_t a = vld1q_u64(Comp{}(lhs, rhs) ? (const uint64x2_t*)lhs.data : (const uint64x2_t*)rhs.data);
 					uint64x2_t b = vld1q_u64(!Comp{}(lhs, rhs) ? (const uint64x2_t*)lhs.data : (const uint64x2_t*)rhs.data);
-					vst1q_u64((uint64x2_t*)lhs.data, a);
-					vst1q_u64((uint64x2_t*)rhs.data, b);
+					vst1q_u64((uint64_t*)lhs.data, a);
+					vst1q_u64((uint64_t*)rhs.data, b);
 #else
 					static_assert(0);
 #endif
@@ -284,10 +284,25 @@ namespace raduls
 				using RECORD_T = Record<2, 2>;
 				FORCE_INLINE void operator()(RECORD_T& lhs, RECORD_T& rhs)
 				{
+/*					__m128i a = _mm_loadu_si128(Comp{}(lhs, rhs) ? (const __m128i*)lhs.data : (const __m128i*)rhs.data);
+					__m128i b = _mm_loadu_si128(!Comp{}(lhs, rhs) ? (const __m128i*)lhs.data : (const __m128i*)rhs.data);
+					_mm_storeu_si128((__m128i*)lhs.data, a);
+					_mm_storeu_si128((__m128i*)rhs.data, b);*/
+
+#if defined(ARCH_X64)
 					__m128i a = _mm_loadu_si128(Comp{}(lhs, rhs) ? (const __m128i*)lhs.data : (const __m128i*)rhs.data);
 					__m128i b = _mm_loadu_si128(!Comp{}(lhs, rhs) ? (const __m128i*)lhs.data : (const __m128i*)rhs.data);
 					_mm_storeu_si128((__m128i*)lhs.data, a);
 					_mm_storeu_si128((__m128i*)rhs.data, b);
+#elif defined(ARCH_ARM)
+					uint64x2_t a = vld1q_u64(Comp{}(lhs, rhs) ? (const uint64x2_t*)lhs.data : (const uint64x2_t*)rhs.data);
+					uint64x2_t b = vld1q_u64(!Comp{}(lhs, rhs) ? (const uint64x2_t*)lhs.data : (const uint64x2_t*)rhs.data);
+					vst1q_u64((uint64_t*)lhs.data, a);
+					vst1q_u64((uint64_t*)rhs.data, b);
+#else
+					static_assert(0);
+#endif
+
 				}
 			};
 
