@@ -858,7 +858,6 @@ namespace raduls
 				th.join();
 			threads.clear();
 
-
 			// ***** collecting counters
 			for (int i = 0; i < 256; ++i)
 			{

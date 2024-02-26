@@ -7134,7 +7134,8 @@ namespace raduls
 		template<typename T, typename SmallSorter, unsigned SMALL_SORT_THRESHOLD>
 		void BS_quick_sort(T *start, T *end, SmallSorter& small_sorter)
 		{
-			new_qsort<Hoare_block_partition_simple, SmallSorter, SMALL_SORT_THRESHOLD>(start, end, LessFirstNotEqual<T>{}, small_sorter);
+			std::sort(start, end, LessFirstNotEqual<T>{});
+//			new_qsort<Hoare_block_partition_simple, SmallSorter, SMALL_SORT_THRESHOLD>(start, end, LessFirstNotEqual<T>{}, small_sorter);
 		}
 
 		
