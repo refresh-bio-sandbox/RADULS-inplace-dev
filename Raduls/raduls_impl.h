@@ -267,7 +267,6 @@ namespace raduls
 		}
 	};
 
-
 	// 128bit copy function
 	// SIZE - in 16B words
 	// dest - aligned to 8B
@@ -378,7 +377,6 @@ namespace raduls
 		}
 		ptr += sizeof(RECORD_T);
 	}
-
 
 	template<typename RECORD_T, typename COUNTER_TYPE, uint32_t BUFFER_WIDTH>
 	FORCE_INLINE void BufferedScattterCorrectionStep(RECORD_T* tmp, COUNTER_TYPE* histo, COUNTER_TYPE* copy_histo, RECORD_T* buffer)
@@ -823,6 +821,7 @@ namespace raduls
 
 			our_fence();
 		}
+
 	public:
 		CRadixSorterMSD(CRadixMSDTaskQueue<RECORD_T>& tasks_queue, uint64_t use_queue_min_recs, uint8_t* _buffer)
 			:
@@ -891,18 +890,15 @@ namespace raduls
 			//stage 1
 			const auto n_parts = FIRST_PASS_THREADS_MULTIPLIER * n_threads;
 			CRangeQueue range_queue(n_parts, n_recs);
-			std::vector<std::thread> threads;
 			std::vector<COUNTER_TYPE[256]> histos(n_parts);
 			alignas(ALIGNMENT)COUNTER_TYPE globalHisto[257] = {};
 
 			std::vector<std::future<void>> futures;
 
 			for (uint32_t th_id = 0; th_id < n_threads; ++th_id)
-//				threads.emplace_back(FirstPassStage1<RECORD_T, COUNTER_TYPE>,
 				futures.emplace_back(std::async(FirstPassStage1<RECORD_T, COUNTER_TYPE>,
 					data, std::ref(histos), byte, std::ref(range_queue)));
 
-//			join_threads(threads);
 			join_futures(futures);
 
 			// ***** collecting counters
@@ -959,13 +955,11 @@ namespace raduls
 			auto fun = is_first_level ? FirstPassStage2<RECORD_T, COUNTER_TYPE> : BigBinsScatter<RECORD_T, COUNTER_TYPE>;
 
 			for (uint32_t th_id = 0; th_id < n_threads; ++th_id)
-//				threads.emplace_back(fun,
 				futures.emplace_back(std::async(fun,
 					data, tmp, byte,
 					std::ref(histos), std::ref(buffers), std::ref(threads_histos),
 					std::ref(range_queue)));
 
-			//			join_threads(threads);
 			join_futures(futures);
 
 			//stage 3
@@ -1033,7 +1027,6 @@ namespace raduls
 				{
 					sorters.emplace_back(std::make_unique<SORTER_T>(tasks_queue,
 						use_queue_min_recs, buffers[n_threads_for_small_bins_running]));
-//					threads.emplace_back(std::ref(*sorters.back().get()));
 					futures.emplace_back(std::async(std::ref(*sorters.back().get())));
 				}
 
@@ -1045,11 +1038,9 @@ namespace raduls
 				{
 					sorters.emplace_back(std::make_unique<SORTER_T>(tasks_queue,
 						use_queue_min_recs, buffers[n_threads_for_small_bins_running]));
-//					threads.emplace_back(std::ref(*sorters.back().get()));
 					futures.emplace_back(std::async(std::ref(*sorters.back().get())));
 				}
 
-//				join_threads(threads);
 				join_futures(futures);
 			}
 		}
@@ -1320,7 +1311,6 @@ namespace raduls
 			RSCacheScatter<RECORD_T, 8>(data, histo, histo_end, rec_pos, cache);
 			RS_permute_without_cache(data, histo, histo_end, rec_pos);
 		}
-		
 	}
 
 	template<typename RECORD_T>
@@ -1360,7 +1350,6 @@ namespace raduls
 		}
 		gloabl_start[byte] = tail;
 	}
-
 	
 	template<typename RECORD_T>
 	void RS_BuildHisto(RECORD_T* A, uint64_t n_recs, uint64_t* histo, uint32_t n_threads, uint32_t rec_pos, uint32_t rec_size)
@@ -1368,16 +1357,13 @@ namespace raduls
 		uint8_t* src = reinterpret_cast<uint8_t*>(A);
 		auto data = src + rec_pos;
 		
-//		std::vector<std::thread> ths;
 		std::vector<std::future<void>> futures;
 		std::vector<uint64_t[256]> histos(n_threads);
-//		auto per_thread = n_recs / n_threads;
 		uint64_t start = 0;
 		uint64_t r = n_recs % n_threads;
 		for (uint32_t tid = 0; tid < n_threads; ++tid)
 		{
 			uint64_t n = n_recs / n_threads + (tid < r);
-//			ths.emplace_back(std::thread([tid, start, n, d = data, rec_size](uint64_t outHist[]) {
 			futures.emplace_back(std::async([tid, start, n, d = data, rec_size](uint64_t outHist[]) {
 				uint64_t myHist[256]{};
 
@@ -1389,8 +1375,6 @@ namespace raduls
 			start += n;
 		}
 		//assert(start == N);
-//		for (auto& th : ths)
-//			th.join();
 		for (auto& fut : futures)
 			fut.get();
 
@@ -1713,14 +1697,12 @@ namespace raduls
 			}
 		}
 
-
 	public:
 		RSSortTask(CRadixMSDTaskQueue<RECORD_T>& tasks_queue, uint64_t use_queue_min_recs, RECORD_T* cache_buff) :
 			tasks_queue(tasks_queue),
 			use_queue_min_recs(use_queue_min_recs),
 			cache_buff(cache_buff)
 		{
-
 		}
 
 		void operator()()
@@ -1736,7 +1718,6 @@ namespace raduls
 				tasks_queue.notify_task_finished();
 			}
 		}
-
 	};
 
 	template<typename RECORD_T>
@@ -1830,14 +1811,10 @@ namespace raduls
 			return;
 		}
 
-//		uint8_t* src = reinterpret_cast<uint8_t*>(A);
 		auto N = n_recs;
-//		auto t = n_threads;
 		uint64_t histo[256]{};
-//		auto data = src + rec_pos;
-//		auto s = std::chrono::high_resolution_clock::now();//dbg
 		RS_BuildHisto(A, n_recs, histo, n_threads, rec_pos, rec_size);
-//		auto e = std::chrono::high_resolution_clock::now();//dbg		
+
 		//accumulate histo 
 		uint64_t prev = 0;
 		uint64_t histo_end[256];
@@ -2071,4 +2048,3 @@ namespace raduls
 	}
 	}
 }
-
