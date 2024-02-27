@@ -1873,7 +1873,7 @@ namespace raduls
 			return;
 		}
 
-		uint8_t* src = reinterpret_cast<uint8_t*>(A);
+//		uint8_t* src = reinterpret_cast<uint8_t*>(A);
 		auto N = n_recs;
 //		auto t = n_threads;
 		uint64_t histo[256]{};
