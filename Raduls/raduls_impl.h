@@ -1408,7 +1408,8 @@ namespace raduls
 		uint8_t* src = reinterpret_cast<uint8_t*>(A);
 		auto data = src + rec_pos;
 		
-		std::vector<std::thread> ths;
+//		std::vector<std::thread> ths;
+		std::vector<std::future<void>> futures;
 		std::vector<uint64_t[256]> histos(n_threads);
 //		auto per_thread = n_recs / n_threads;
 		uint64_t start = 0;
@@ -1416,7 +1417,8 @@ namespace raduls
 		for (uint32_t tid = 0; tid < n_threads; ++tid)
 		{
 			uint64_t n = n_recs / n_threads + (tid < r);
-			ths.emplace_back(std::thread([tid, start, n, d = data, rec_size](uint64_t outHist[]) {
+//			ths.emplace_back(std::thread([tid, start, n, d = data, rec_size](uint64_t outHist[]) {
+			futures.emplace_back(std::async([tid, start, n, d = data, rec_size](uint64_t outHist[]) {
 				uint64_t myHist[256]{};
 
 				auto data = d + start * rec_size;
@@ -1427,8 +1429,10 @@ namespace raduls
 			start += n;
 		}
 		//assert(start == N);
-		for (auto& th : ths)
-			th.join();
+//		for (auto& th : ths)
+//			th.join();
+		for (auto& fut : futures)
+			fut.get();
 
 		for (uint32_t i = 0; i < 256; ++i)
 			for (uint32_t tid = 0; tid < n_threads; ++tid)
@@ -1871,12 +1875,12 @@ namespace raduls
 
 		uint8_t* src = reinterpret_cast<uint8_t*>(A);
 		auto N = n_recs;
-		auto t = n_threads;
+//		auto t = n_threads;
 		uint64_t histo[256]{};
-		auto data = src + rec_pos;
-		auto s = std::chrono::high_resolution_clock::now();//dbg
+//		auto data = src + rec_pos;
+//		auto s = std::chrono::high_resolution_clock::now();//dbg
 		RS_BuildHisto(A, n_recs, histo, n_threads, rec_pos, rec_size);
-		auto e = std::chrono::high_resolution_clock::now();//dbg		
+//		auto e = std::chrono::high_resolution_clock::now();//dbg		
 		//accumulate histo 
 		uint64_t prev = 0;
 		uint64_t histo_end[256];

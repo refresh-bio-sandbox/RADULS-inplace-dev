@@ -171,10 +171,10 @@ void RunExperiment(const Params& params)
 	std::cerr << "done.\n";
 	std::cerr << "Time: " << time << "\n";
 
-	uint64_t phases_performed = params.key_size.val;
+/*	uint64_t phases_performed = params.key_size.val;
 	if (params.n_phases.val)
 		phases_performed = *params.n_phases.val;
-
+		*/
 	auto res = input;
 	//	if (phases_performed % 2) 
 	//		res = tmp;
