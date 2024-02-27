@@ -72,9 +72,9 @@ CFLAGS	= -DNDEBUG -I$(RADULS_DIR) -fopenmp -Wall -static -O3 -fno-ipa-ra -fno-tr
 #CFLAGS	= -I$(RADULS_DIR) -fopenmp -Wall -static -O3 -fno-ipa-ra -fno-tree-vrp -fno-tree-pre -m64 -std=c++17 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 
 ifeq ($(uname_S), Darwin)
-	CLINK	= -lm $(COMMON_FLAGS) -fopenmp -static -O3 -fno-ipa-ra -fno-tree-vrp -fno-tree-pre  -std=c++17 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
-else
 	CLINK	= -lm $(COMMON_FLAGS) -fopenmp -O3 -fno-ipa-ra -fno-tree-vrp -fno-tree-pre  -std=c++17 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
+else
+	CLINK	= -lm $(COMMON_FLAGS) -fopenmp -static -O3 -fno-ipa-ra -fno-tree-vrp -fno-tree-pre  -std=c++17 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 endif
 
 
