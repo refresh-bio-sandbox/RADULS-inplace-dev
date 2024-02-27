@@ -1332,7 +1332,7 @@ namespace raduls
 	void RSPermuteThread_first_store(RECORD_T* data, std::vector<uint64_t[256]>& _histo_start, std::vector<uint64_t[256]>& _histo_end, uint32_t rec_pos, uint64_t tid, uint64_t n_recs_per_this_thread, RECORD_T* cache)
 	{
 		//TODO: to trzeba zrefaktoryzowac tak zeby nie bylo tu sztywnych sta³ych, wycniagnac to gdzies jakos ladnie
-		auto constexpr BUFFER_WIDTH = GetBufferWidth(sizeof(RECORD_T) / 8);
+//		auto constexpr BUFFER_WIDTH = GetBufferWidth(sizeof(RECORD_T) / 8);
 
 		uint64_t* histo = _histo_start[tid];
 		uint64_t* histo_end = _histo_end[tid];
@@ -1410,7 +1410,7 @@ namespace raduls
 		
 		std::vector<std::thread> ths;
 		std::vector<uint64_t[256]> histos(n_threads);
-		auto per_thread = n_recs / n_threads;
+//		auto per_thread = n_recs / n_threads;
 		uint64_t start = 0;
 		uint64_t r = n_recs % n_threads;
 		for (uint32_t tid = 0; tid < n_threads; ++tid)
@@ -1679,11 +1679,8 @@ namespace raduls
 			uint64_t histo_copy[257];
 			std::copy(histo, histo + 256, histo_copy);
 			histo_copy[256] = n_recs;
-
 			
-
-
-			constexpr uint32_t BUFFER_WIDTH = GetBufferWidth(sizeof(RECORD_T) / 8);
+//			constexpr uint32_t BUFFER_WIDTH = GetBufferWidth(sizeof(RECORD_T) / 8);
 
 			if (n_recs < 1 * 1000 * 1000) //1M
 			{
