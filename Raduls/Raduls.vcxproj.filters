@@ -57,11 +57,11 @@
     <ClInclude Include="vector_ext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="qsorter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="sorting_network.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="raduls_AVX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

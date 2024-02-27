@@ -168,6 +168,7 @@
     <ClCompile Include="exceptions.cpp" />
     <ClInclude Include="instr_set_detect.h" />
     <ClInclude Include="instr_set_dispatcher.h" />
+    <ClInclude Include="qsorter.h" />
     <ClInclude Include="raduls.h" />
     <ClInclude Include="raduls_headers.h" />
     <ClInclude Include="raduls_impl.h" />
@@ -199,7 +200,6 @@
       <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
-    <ClCompile Include="sorting_network.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

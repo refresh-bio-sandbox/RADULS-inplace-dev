@@ -4,7 +4,7 @@ else                          # If uname not available => 'not'
     uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
 endif
 
-OBJS = sorting_network.o raduls_impl.o exceptions.o
+OBJS = raduls_impl.o exceptions.o
 
 ifeq ($(PLATFORM), none)
 $(info *** Unspecified platform - use x64 SSE2)
@@ -81,9 +81,6 @@ libraduls.a: $(OBJS)
 
 excetions.o: exceptions.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
-
-sorting_network.o: sorting_network.cpp
-	$(CXX) -static -O1 $(COMMON_FLAGS) $(COMMON_DEFS) -std=c++14 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -c $< -o $@
 
 raduls_impl.o: raduls_impl.cpp
 	$(CXX) $(CFLAGS) $(COMMON_DEFS) -c $< -o $@
