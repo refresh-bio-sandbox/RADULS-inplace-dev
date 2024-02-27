@@ -965,13 +965,11 @@ namespace raduls
 			//stage 3
 			range_queue.reset_indices();
 			for (uint32_t th_id = 0; th_id < n_threads; ++th_id)
-				threads.emplace_back(FirstPassStage3<RECORD_T, COUNTER_TYPE>,
+				futures.emplace_back(std::async(FirstPassStage3<RECORD_T, COUNTER_TYPE>,
 					tmp, std::ref(histos), std::ref(buffers), std::ref(threads_histos),
-					std::ref(range_queue));
+					std::ref(range_queue)));
 
-			for (auto& th : threads)
-				th.join();
-			threads.clear();
+			join_futures(futures);
 
 			if (!is_first_level)
 			{
