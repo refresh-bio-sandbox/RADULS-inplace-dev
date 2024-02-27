@@ -9,6 +9,8 @@
 #include <functional>
 #include <algorithm>
 
+//#define USE_BLOCK_QSORT
+
 namespace raduls
 {
 	namespace NAMESPACE_NAME
@@ -6874,8 +6876,7 @@ namespace raduls
 			}
 		}
 
-		const int BLOCKSIZE = 32;
-
+#ifdef USE_BLOCK_QSORT
 		template<typename iter, typename Compare>
 		inline void sort_pair(iter i1, iter i2, Compare less) {
 			typedef typename std::iterator_traits<iter>::value_type T;
@@ -6893,6 +6894,7 @@ namespace raduls
 			return i2;
 		}
 
+		const int BLOCKSIZE = 32;
 
 		template<typename iter, typename Compare>
 		inline iter hoare_block_partition_simple(iter begin, iter end, iter pivot_position, Compare less) {
@@ -7137,8 +7139,7 @@ namespace raduls
 			std::sort(start, end, LessFirstNotEqual<T>{});
 //			new_qsort<Hoare_block_partition_simple, SmallSorter, SMALL_SORT_THRESHOLD>(start, end, LessFirstNotEqual<T>{}, small_sorter);
 		}
-
-		
+#endif		
 
 		template<typename RECORD_T>
 		struct HybridSmallSortImpl
@@ -7154,8 +7155,11 @@ namespace raduls
 				else if (size <= 30)
 					smallSorter_ro_ins(data, size);
 				else
+#ifdef USE_BLOCK_QSORT
 					BS_quick_sort<RECORD_T, SmallSorter_ro_ins, 24>(data, data + size, smallSorter_ro_ins);
-
+#else
+					std::sort(data, data + size);
+#endif
 			}
 		};
 
@@ -7177,7 +7181,11 @@ namespace raduls
 				else if (size <= 24)
 					small_sorter_ro(data, size);
 				else
+#ifdef USE_BLOCK_QSORT
 					BS_quick_sort<RECORD_T, SamllSorter_ro, 24>(data, data + size, small_sorter_ro);
+#else
+					std::sort(data, data + size);
+#endif
 			}
 		};
 
@@ -7202,7 +7210,11 @@ namespace raduls
 				else if (size <= 30)
 					small_sorter_ro_ins(data, size);
 				else
+#ifdef USE_BLOCK_QSORT
 					BS_quick_sort<RECORD_T, SamllSorter_ro_ins_sort, 24>(data, data + size, small_sorter_ro_ins);
+#else
+					std::sort(data, data + size);
+#endif
 			}
 		};
 
@@ -7223,7 +7235,11 @@ namespace raduls
 				else if (size <= 24)
 					small_sorter_ro(data, size);
 				else
+#ifdef USE_BLOCK_QSORT
 					BS_quick_sort<RECORD_T, SamllSorter_ro, 24>(data, data + size, small_sorter_ro);
+#else
+					std::sort(data, data + size);
+#endif
 			}
 		};
 
@@ -7248,7 +7264,11 @@ namespace raduls
 				else if (size <= 24)
 					small_sorter_ro_ins(data, size);
 				else
+#ifdef USE_BLOCK_QSORT
 					BS_quick_sort<RECORD_T, SamllSorter_ro_ins_sort, 24>(data, data + size, small_sorter_ro_ins);
+#else
+					std::sort(data, data + size);
+#endif
 			}
 		};
 
@@ -7274,7 +7294,11 @@ namespace raduls
 				else if (size <= 32)
 					small_sorter_sn1(data, size);
 				else
+#ifdef USE_BLOCK_QSORT
 					BS_quick_sort<RECORD_T, SmallSorter_sn1, 24>(data, data + size, small_sorter_sn1);
+#else
+					std::sort(data, data + size);
+#endif
 			}
 		};
 
@@ -7296,10 +7320,13 @@ namespace raduls
 				else if (size <= 64)
 					small_sorter(data, size);
 				else
+#ifdef USE_BLOCK_QSORT
 					BS_quick_sort<RECORD_T, SmallSorter, 56>(data, data + size, small_sorter);
+#else
+					std::sort(data, data + size);
+#endif
 			}
 		};
-
 
 		template<typename RECORD_T>
 		struct HybridSmallSort

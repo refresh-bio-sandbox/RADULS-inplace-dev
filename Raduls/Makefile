@@ -63,6 +63,11 @@ ifeq ($(ADD_AVX2), true)
 	OBJS += raduls_AVX2.o sorting_network_AVX2.o
 endif
 
+ifdef MAX_REC_SIZE
+	COMMON_DEFS += -DMAX_REC_SIZE=$(MAX_REC_SIZE)
+endif
+
+
 CFLAGS = -DNDEBUG -Wall -O3 $(COMMON_FLAGS) -static -fno-ipa-ra -fno-tree-vrp -fno-tree-pre $(COMMON_FLAGS) -std=c++14 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 #CFLAGS = -Wall -O3 -static -fno-ipa-ra -fno-tree-vrp -fno-tree-pre -m64 -std=c++14 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 

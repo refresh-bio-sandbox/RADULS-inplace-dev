@@ -165,7 +165,6 @@
     </ClCompile>
     <ClInclude Include="comp_and_swap.h" />
     <ClInclude Include="defs.h" />
-    <ClCompile Include="..\3rd_party\mimalloc\src\static.c" />
     <ClCompile Include="exceptions.cpp" />
     <ClInclude Include="instr_set_detect.h" />
     <ClInclude Include="instr_set_dispatcher.h" />
@@ -177,6 +176,7 @@
     <ClInclude Include="sorting_network.h" />
     <ClInclude Include="sorting_network_impl.h" />
     <ClInclude Include="sort_params.h" />
+    <ClInclude Include="vector_ext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="raduls_impl.cpp" />

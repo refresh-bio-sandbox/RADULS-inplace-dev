@@ -3,12 +3,17 @@
 #include <cstdint>
 
 #define RADULS_VER  "2.1.0"
-#define RADULS_DATE "2024-02-26"
+#define RADULS_DATE "2024-02-27"
 
 namespace raduls
 {		
+#ifndef MAX_REC_SIZE
 	//	const uint32_t MAX_REC_SIZE_IN_BYTES = 64;
 	const uint32_t MAX_REC_SIZE_IN_BYTES = 8; //TODO: przywrócic powyzsze
+#else
+	static_assert(MAX_REC_SIZE % 8 == 0 && MAX_REC_SIZE <= 64 && MAX_REC_SIZE > 0, "MAX_REC_SIZE must be divisible by 8 and not larger than 64");
+	const uint32_t MAX_REC_SIZE_IN_BYTES = (uint32_t) MAX_REC_SIZE;
+#endif
 
 	//input and tmp arrays must be alignet to this value
 	//constexpr uint32_t ALIGNMENT = 0x100;

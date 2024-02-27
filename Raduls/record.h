@@ -42,7 +42,7 @@ namespace raduls
 
 			FORCE_INLINE bool operator<(const Record<_RECORD_SIZE, 2>& rhs)
 			{
-				return data[1] < rhs.data[1] || data[1] == rhs.data[1] && data[0] < rhs.data[0];
+				return data[1] < rhs.data[1] || (data[1] == rhs.data[1] && data[0] < rhs.data[0]);
 			}
 
 			FORCE_INLINE bool operator==(const Record<_RECORD_SIZE, 2>& rhs) const

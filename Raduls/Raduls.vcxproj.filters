@@ -54,6 +54,9 @@
     <ClInclude Include="sorting_network_impl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="vector_ext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sorting_network.cpp">
@@ -76,9 +79,6 @@
     </ClCompile>
     <ClCompile Include="exceptions.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\3rd_party\mimalloc\src\static.c">
-      <Filter>Library Files</Filter>
     </ClCompile>
     <ClCompile Include="raduls_NEON.cpp">
       <Filter>Source Files</Filter>

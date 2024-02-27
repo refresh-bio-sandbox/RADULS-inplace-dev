@@ -1,24 +1,6 @@
 #pragma once
 #include "defs.h"
-#if defined(ARCH_X64)
-#include "xmmintrin.h"
-#include <emmintrin.h>
-#elif defined(ARCH_ARM)
-#include <arm_neon.h>
-#endif
-
-/*
-* https://arm-software.github.io/acle/neon_intrinsics/advsimd.html
-* https://github.com/DLTcollab/sse2neon/blob/master/sse2neon.h
-x64							arm
-_mm_loadu_si128				vld1q_u64
-_mm_storeu_si128			vst1q_u64
-
-_mm_stream_si64				
-_mm_stream_si128			
-_mm_load_si128				vld1q_s64	
-_mm_sfence					
-*/
+#include "vector_ext.h"
 
 namespace raduls
 {
@@ -26,29 +8,6 @@ namespace raduls
 	{
 		namespace small_sort
 		{
-#if defined(_MSC_VER)
-#define SSE2NEON_BARRIER() _ReadWriteBarrier()
-#else
-#define SSE2NEON_BARRIER()                     \
-    do {                                       \
-        __asm__ __volatile__("" ::: "memory"); \
-        (void) 0;                              \
-    } while (0)
-#endif
-
-			FORCE_INLINE void _sse2neon_smp_mb(void)
-			{
-				SSE2NEON_BARRIER();
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && \
-    !defined(__STDC_NO_ATOMICS__)
-				atomic_thread_fence(memory_order_seq_cst);
-#elif defined(__GNUC__) || defined(__clang__)
-				__atomic_thread_fence(__ATOMIC_SEQ_CST);
-#else /* MSVC */
-//				__dmb(_ARM64_BARRIER_ISH);
-#endif
-			}
-
 			template<typename RECORD_T, typename Comp>
 			struct SwapLowerGreater
 			{

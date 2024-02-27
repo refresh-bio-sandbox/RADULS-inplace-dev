@@ -21,13 +21,7 @@
 #include <cassert>
 
 #include "defs.h"
-#if defined(ARCH_X64)
-#include <emmintrin.h>
-#include <immintrin.h>
-#elif defined(ARCH_ARM)
-#include <arm_neon.h>
-#endif
-
+#include "vector_ext.h"
 
 namespace raduls
 {
@@ -62,29 +56,6 @@ namespace raduls
 		return (index < sizeof(wide_small_sort_thresholds) / sizeof(wide_small_sort_thresholds[0])) ? wide_small_sort_thresholds[index] : 32;
 	}
 
-	/* Compiler barrier */
-#if defined(_MSC_VER)
-#define SSE2NEON_BARRIER() _ReadWriteBarrier()
-#else
-#define SSE2NEON_BARRIER()                     \
-    do {                                       \
-        __asm__ __volatile__("" ::: "memory"); \
-        (void) 0;                              \
-    } while (0)
-#endif
-
-	FORCE_INLINE void _sse2neon_smp_mb(void)
-	{
-		SSE2NEON_BARRIER();
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && \
-    !defined(__STDC_NO_ATOMICS__)
-		atomic_thread_fence(memory_order_seq_cst);
-#elif defined(__GNUC__) || defined(__clang__)
-		__atomic_thread_fence(__ATOMIC_SEQ_CST);
-#else /* MSVC */
-//		__dmb(_ARM64_BARRIER_ISH);
-#endif
-	}
 
 #ifdef __GNUG__
 #if __GNUC__ < 6
@@ -311,7 +282,6 @@ namespace raduls
 				IntrCopy128<SIZE, 1>::Copy(dest, src);
 		}
 	};
-
 
 	template<typename RECORD_T, typename COUNTER_TYPE>
 	FORCE_INLINE void BuildHisto(COUNTER_TYPE* histo, uint64_t n, uint8_t*& ptr)
@@ -805,11 +775,8 @@ namespace raduls
 						}
 					}
 			}
-#if defined(ARCH_X64)
-			_mm_sfence();
-#elif defined(ARCH_ARM)
-			_sse2neon_smp_mb();
-#endif
+
+			our_fence();
 		}
 
 		void SmallRadixSort(RECORD_T* data, RECORD_T* tmp, uint64_t n_recs, uint32_t byte, uint32_t last_byte_pos)
@@ -853,11 +820,8 @@ namespace raduls
 				if (must_copy_tmp)
 					IntrCopy64fun(data, tmp, n_recs * sizeof(RECORD_T) / 8);
 			}
-#if defined(ARCH_X64)
-			_mm_sfence();
-#elif defined(ARCH_ARM)
-			_sse2neon_smp_mb();
-#endif
+
+			our_fence();
 		}
 	public:
 		CRadixSorterMSD(CRadixMSDTaskQueue<RECORD_T>& tasks_queue, uint64_t use_queue_min_recs, uint8_t* _buffer)
@@ -1287,11 +1251,7 @@ namespace raduls
 					CacheRecordToMainMemory<RECORD_T, BUFFER_WIDTH>(data, byte, key, first_store, histo, histo_begin, histo_end, read_pos, tail, cache_buff);
 			}
 
-#if defined(ARCH_X64)
-			_mm_sfence();
-#elif defined(ARCH_ARM)
-			_sse2neon_smp_mb();
-#endif
+			our_fence();
 
 			//store records that are still in cache buffer back to source digit (byte) range 
 			CleanCache<RECORD_T, BUFFER_WIDTH>(data, byte, first_store, histo, histo_begin, cache_buff);
@@ -1603,11 +1563,8 @@ namespace raduls
 					CacheRecordToMainMemory_single_thread<RECORD_T, BUFFER_WIDTH>(data, byte, key, first_store, histo, histo_begin, read_pos, cache_buff);				
 			}
 
-#if defined(ARCH_X64)
-			_mm_sfence();
-#elif defined(ARCH_ARM)
-			_sse2neon_smp_mb();
-#endif
+			our_fence();
+
 			//store records that are still in cache buffer back to source digit (byte) range 
 			CleanCache<RECORD_T, BUFFER_WIDTH>(data, byte, first_store, histo, histo_begin, cache_buff);
 		}		
