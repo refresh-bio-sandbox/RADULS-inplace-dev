@@ -5,6 +5,7 @@
 #include <immintrin.h>
 #elif defined(ARCH_ARM)
 #include <arm_neon.h>
+#include <atomic>
 // https://arm-software.github.io/acle/neon_intrinsics/advsimd.html
 // https://github.com/DLTcollab/sse2neon/blob/master/sse2neon.h
 #endif
