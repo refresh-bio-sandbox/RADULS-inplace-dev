@@ -110,5 +110,5 @@ sorting_network_NEON.o: sorting_network_NEON.cpp
 	$(CXX) -static -O1 $(COMMON_FLAGS) $(COMMON_DEFS) -std=c++14 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -c $< -o $@
 
 clean:
-	rm *.o
-	rm libraduls.a
+	-rm *.o
+	-rm libraduls.a
