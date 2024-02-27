@@ -96,6 +96,11 @@ namespace raduls
 			static CInstrSetNEON neon;
 #endif
 
+			auto instr_set = InstrSetDetect::GetInstr();
+
+			if (instr_set == InstrSetDetect::Instr::NotSet)
+				throw exceptions::UndetectedHardware();
+
 			runner = &neon;
 		}
 #endif

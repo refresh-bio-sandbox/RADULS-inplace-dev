@@ -1145,7 +1145,7 @@ namespace raduls
 					first_store[key] = true;
 
 					auto n_recs_left_to_read_for_current_byte = tail - read_pos;
-					if (n_recs_left_to_read_for_current_byte >= recs_to_write)
+					if ((int64_t) n_recs_left_to_read_for_current_byte >= recs_to_write)
 					{
 						read_pos -= recs_to_write;
 						tail -= recs_to_write;
