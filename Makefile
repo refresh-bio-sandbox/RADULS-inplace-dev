@@ -92,8 +92,8 @@ $(RADULS_DIR)/libraduls.a:
 	cd $(RADULS_DIR) && $(MAKE)
 
 clean:	
-	rm $(MAIN_DIR)/*.o
-	rm -rf bin
+	-rm $(MAIN_DIR)/*.o
+	-rm -rf bin
 	cd $(RADULS_DIR) && $(MAKE) clean
 
 all: raduls
