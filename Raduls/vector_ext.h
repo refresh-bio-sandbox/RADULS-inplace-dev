@@ -24,7 +24,7 @@ FORCE_INLINE void our_fence(void)
 #if defined(__STDC_NO_ATOMICS__)
     __atomic_thread_fence(__ATOMIC_SEQ_CST);
 #else
-    atomic_thread_fence(memory_order_seq_cst);
+    std::atomic_thread_fence(std::memory_order_seq_cst);
 #endif
 #endif
 }
