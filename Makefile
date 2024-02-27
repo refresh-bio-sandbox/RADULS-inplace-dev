@@ -70,7 +70,7 @@ endif
 
 CFLAGS	= -DNDEBUG -I$(RADULS_DIR) -fopenmp -Wall -static -O3 -fno-ipa-ra -fno-tree-vrp -fno-tree-pre $(COMMON_FLAGS) -std=c++17 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 #CFLAGS	= -I$(RADULS_DIR) -fopenmp -Wall -static -O3 -fno-ipa-ra -fno-tree-vrp -fno-tree-pre -m64 -std=c++17 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
-CLINK	= -lm -fopenmp -static -O3 -fno-ipa-ra -fno-tree-vrp -fno-tree-pre  -std=c++17 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
+CLINK	= -lm $(COMMON_FLAGS) -fopenmp -static -O3 -fno-ipa-ra -fno-tree-vrp -fno-tree-pre  -std=c++17 -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 
 
 OBJS = \
