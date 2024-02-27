@@ -19,7 +19,7 @@ FORCE_INLINE void our_fence(void)
         \
             __asm__ __volatile__("" ::: "memory"); \
             (void)0;                              \
-    } while (0)
+    } while (0);
 
 #if defined(__STDC_NO_ATOMICS__)
     __atomic_thread_fence(__ATOMIC_SEQ_CST);
