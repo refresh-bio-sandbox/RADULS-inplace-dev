@@ -1,17 +1,14 @@
 ifdef MSVC     # Avoid the MingW/Cygwin sections
     uname_S := Windows
+	uname_M := "x86_64"
 else                          # If uname not available => 'not'
     uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
+	uname_M := $(shell sh -c 'uname -m 2>/dev/null || echo not')
 endif
 
 OBJS = raduls_impl.o exceptions.o
 
-ifeq ($(PLATFORM), none)
-$(info *** Unspecified platform - use x64 SSE2)
-	COMMON_FLAGS := -msse2 -m64 
-	COMMON_DEFS := -DCOMPILE_FOR_SSE2 -DARCH_X64
-	OBJS += raduls_SSE2.o sorting_network_SSE2.o
-else ifeq ($(PLATFORM), arm8)
+ifeq ($(PLATFORM), arm8)
 $(info *** ARMv8 with NEON extensions ***)
 	COMMON_FLAGS := -march=armv8-a 
 	COMMON_DEFS := -DCOMPILE_FOR_NEON -DARCH_ARM
@@ -37,15 +34,31 @@ $(info *** x86-64 with AVX2 extensions ***)
 	COMMON_DEFS := -DCOMPILE_FOR_AVX2 -DARCH_X64
 	OBJS += raduls_AVX2.o sorting_network_AVX2.o
 else ifeq ($(PLATFORM), native)
-$(info *** x86-64 with AVX2 extensions and native architecture ***)
-	COMMON_FLAGS := -mavx2 -march=native 
-	COMMON_DEFS := -DCOMPILE_FOR_AVX2 -DARCH_X64
-	OBJS += raduls_AVX2.o sorting_network_AVX2.o
+$(info *** native architecture ***)
+	ifeq ($(uname_M),x86_64)
+		ARCH_FLAGS := -m64
+		COMMON_DEFS := -DCOMPILE_FOR_SSE2 -DCOMPILE_FOR_AVX -DCOMPILE_FOR_AVX2 -DARCH_X64
+		OBJS += raduls_SSE2.o sorting_network_SSE2.o
+		OBJS += raduls_AVX.o sorting_network_AVX.o
+		OBJS += raduls_AVX2.o sorting_network_AVX2.o
+	else
+		ARCH_FLAGS := -march=armv8-a
+		COMMON_DEFS := -DCOMPILE_FOR_NEON -DARCH_ARM
+		OBJS += raduls_NEON.o sorting_network_NEON.o
+	endif	
 else
-$(info *** x86-64 with AVX2 extensions ***)
-	COMMON_FLAGS := -mavx2 -m64
-	COMMON_DEFS := -DCOMPILE_FOR_AVX2 -DARCH_X64
-	OBJS += raduls_AVX2.o sorting_network_AVX2.o
+$(info *** default extensions ***)
+	ifeq ($(uname_M),x86_64)
+		ARCH_FLAGS := -m64
+		COMMON_DEFS := -DCOMPILE_FOR_SSE2 -DCOMPILE_FOR_AVX -DCOMPILE_FOR_AVX2 -DARCH_X64
+		OBJS += raduls_SSE2.o sorting_network_SSE2.o
+		OBJS += raduls_AVX.o sorting_network_AVX.o
+		OBJS += raduls_AVX2.o sorting_network_AVX2.o
+	else
+		ARCH_FLAGS := -march=armv8-a
+		COMMON_DEFS := -DCOMPILE_FOR_NEON -DARCH_ARM
+		OBJS += raduls_NEON.o sorting_network_NEON.o
+	endif	
 endif
 
 ifeq ($(ADD_SSE2), true)
